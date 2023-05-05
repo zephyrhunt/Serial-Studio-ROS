@@ -15,9 +15,23 @@ find_package(QT NAMES Qt5 Qt6 REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Bluetooth Gui Network PrintSupport Qml Quick QuickControls2 SerialPort Svg Widgets Xml)
 find_package(Qt${QT_VERSION_MAJOR} OPTIONAL_COMPONENTS Concurrent Core5Compat OpenGL OpenGLWidgets)
 
-qt_standard_project_setup()
+#ROS packages
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+#ROS Messages
+find_package(std_msgs REQUIRED)
+#find_package(sensor_msgs REQUIRED)
 
+set(ROS_SOURCES
+        ROS/QNode.cpp
+        ROS/QNode.h
+        )
+
+qt_standard_project_setup()
 qt_add_resources(RESOURCE assets/Resources.qrc)
+
+# 把add_executable和link结合在了一起，不好
 qt_add_executable(serial-studio WIN32 MACOSX_BUNDLE
     libs/QMapControl/src/arrowpoint.cpp libs/QMapControl/src/arrowpoint.h
     libs/QMapControl/src/bingapimapadapter.cpp libs/QMapControl/src/bingapimapadapter.h
@@ -195,9 +209,10 @@ qt_add_executable(serial-studio WIN32 MACOSX_BUNDLE
     src/UI/Widgets/Plot.cpp src/UI/Widgets/Plot.h
     src/UI/Widgets/Terminal.cpp src/UI/Widgets/Terminal.h
     src/main.cpp
-
-        ${RESOURCE}
+    ${RESOURCE}
+        ${ROS_RESOURCE}
 )
+
 qt_add_qml_module(serial-studio
     URI serial_studio
     VERSION ${PROJECT_VERSION}
@@ -246,144 +261,6 @@ qt_add_qml_module(serial-studio
         assets/qml/Windows/ProjectEditor.qml
         assets/qml/main.qml
         assets/scripts/frame-parser.js
-#    RESOURCES
-#        assets/fonts/Roboto-Bold.ttf
-#        assets/fonts/Roboto-Regular.ttf
-#        assets/fonts/RobotoMono-Bold.ttf
-#        assets/fonts/RobotoMono-Regular.ttf
-#        assets/icons/ac-power.svg
-#        assets/icons/accelerometer.svg
-#        assets/icons/add.svg
-#        assets/icons/apply.svg
-#        assets/icons/arrow-right.svg
-#        assets/icons/backspace.svg
-#        assets/icons/bar.svg
-#        assets/icons/battery.svg
-#        assets/icons/bug.svg
-#        assets/icons/close.svg
-#        assets/icons/code.svg
-#        assets/icons/compass.svg
-#        assets/icons/connect.svg
-#        assets/icons/copy.svg
-#        assets/icons/cut.svg
-#        assets/icons/dashboard.svg
-#        assets/icons/dataset.svg
-#        assets/icons/delete-item.svg
-#        assets/icons/delete.svg
-#        assets/icons/developer-board.svg
-#        assets/icons/device-hub.svg
-#        assets/icons/disconnect.svg
-#        assets/icons/down.svg
-#        assets/icons/drag-drop.svg
-#        assets/icons/end-sequence.svg
-#        assets/icons/error.svg
-#        assets/icons/ethernet.svg
-#        assets/icons/expand.svg
-#        assets/icons/fft.svg
-#        assets/icons/fullscreen-exit.svg
-#        assets/icons/fullscreen.svg
-#        assets/icons/gauge.svg
-#        assets/icons/gps.svg
-#        assets/icons/graphs.svg
-#        assets/icons/group.svg
-#        assets/icons/gyro.svg
-#        assets/icons/heart-broken.svg
-#        assets/icons/help.svg
-#        assets/icons/hide-all.svg
-#        assets/icons/info.svg
-#        assets/icons/json.svg
-#        assets/icons/led.svg
-#        assets/icons/link.svg
-#        assets/icons/location-off.svg
-#        assets/icons/location-on.svg
-#        assets/icons/map.svg
-#        assets/icons/media-next.svg
-#        assets/icons/media-pause.svg
-#        assets/icons/media-play.svg
-#        assets/icons/media-prev.svg
-#        assets/icons/multiplot.svg
-#        assets/icons/new.svg
-#        assets/icons/open.svg
-#        assets/icons/plot.svg
-#        assets/icons/points.svg
-#        assets/icons/power.svg
-#        assets/icons/ram.svg
-#        assets/icons/redo.svg
-#        assets/icons/refresh.svg
-#        assets/icons/registration.svg
-#        assets/icons/restore.svg
-#        assets/icons/right.svg
-#        assets/icons/save.svg
-#        assets/icons/schedule.svg
-#        assets/icons/scroll-bottom.svg
-#        assets/icons/scroll-down.svg
-#        assets/icons/scroll-top.svg
-#        assets/icons/scroll-up.svg
-#        assets/icons/search.svg
-#        assets/icons/send.svg
-#        assets/icons/separator.svg
-#        assets/icons/settings.svg
-#        assets/icons/show-all.svg
-#        assets/icons/start-sequence.svg
-#        assets/icons/template.svg
-#        assets/icons/thermometer.svg
-#        assets/icons/undo.svg
-#        assets/icons/up.svg
-#        assets/icons/update.svg
-#        assets/icons/usb.svg
-#        assets/icons/visibility.svg
-#        assets/icons/warning.svg
-#        assets/icons/widget.svg
-#        assets/images/donate-qr.svg
-#        assets/images/icon-small@1x.png
-#        assets/images/icon-small@2x.png
-#        assets/images/icon-window.svg
-#        assets/images/icon@1x.png
-#        assets/images/icon@2x.png
-#        assets/images/shadow.png
-#        assets/images/window-shadow.png
-#        assets/messages/Acknowledgements.txt
-#        assets/messages/Welcome_DE.txt
-#        assets/messages/Welcome_EN.txt
-#        assets/messages/Welcome_ES.txt
-#        assets/messages/Welcome_RU.txt
-#        assets/messages/Welcome_ZH.txt
-#        assets/themes/1_Flat.json
-#        assets/themes/2_Dark.json
-#        assets/themes/3_Classic.json
-#        assets/themes/4_Midnight.json
-#        assets/themes/5_Noir.json
-#        assets/themes/6_Mathworks.json
-#        assets/touchbar/console.png
-#        assets/touchbar/dashboard.png
-#        assets/touchbar/setup.png
-#        assets/translations/de.qm
-#        assets/translations/de.ts
-#        assets/translations/en.qm
-#        assets/translations/en.ts
-#        assets/translations/es.qm
-#        assets/translations/es.ts
-#        assets/translations/ru.qm
-#        assets/translations/ru.ts
-#        assets/translations/zh.qm
-#        assets/translations/zh.ts
-#        assets/window-border/macOS/close-active.svg
-#        assets/window-border/macOS/close-hover.svg
-#        assets/window-border/macOS/close-normal.svg
-#        assets/window-border/macOS/maximize-active.svg
-#        assets/window-border/macOS/maximize-hover.svg
-#        assets/window-border/macOS/maximize-normal.svg
-#        assets/window-border/macOS/minimize-active.svg
-#        assets/window-border/macOS/minimize-hover.svg
-#        assets/window-border/macOS/minimize-normal.svg
-#        assets/window-border/close.svg
-#        assets/window-border/fullscreen.svg
-#        assets/window-border/maximize.svg
-#        assets/window-border/minimize.svg
-#        assets/window-border/restore.svg
-#        assets/window-border/unmaximize.svg
-#        assets/icons/paste.svg
-#        ${RESOURCE}
     NO_RESOURCE_TARGET_PATH
 )
 
@@ -400,6 +277,7 @@ target_include_directories(serial-studio PRIVATE
     libs/qwt/classincludes
     libs/qwt/src
     src
+    src/ROS
 )
 
 target_compile_definitions(serial-studio PRIVATE
@@ -414,7 +292,8 @@ target_compile_definitions(serial-studio PRIVATE
     _USE_MATH_DEFINES
 )
 
-target_link_libraries(serial-studio PRIVATE
+
+target_link_libraries(serial-studio
     Qt::Bluetooth
     Qt::Core
     Qt::Gui
@@ -429,6 +308,10 @@ target_link_libraries(serial-studio PRIVATE
     Qt::Xml
 )
 
+ament_target_dependencies(serial-studio
+        rclcpp
+        std_msgs
+)
 
 # Resources:
 set_source_files_properties("libs/QSimpleUpdater/etc/resources/update.png"
@@ -448,7 +331,7 @@ qt_add_resources(serial-studio "qsimpleupdater"
 )
 
 if((QT_VERSION_MAJOR EQUAL 6))
-    target_link_libraries(serial-studio PRIVATE
+    target_link_libraries(serial-studio
         Qt::Core5Compat
     )
 endif()
@@ -470,7 +353,7 @@ if(win32_x_)
         libs/OpenSSL/include
     )
 
-    target_link_libraries(serial-studio PRIVATE
+    target_link_libraries(serial-studio
         ${CMAKE_CURRENT_SOURCE_DIR}/dll/Windows/libcrypto.lib
         ${CMAKE_CURRENT_SOURCE_DIR}/dll/Windows/libssl.lib
         advapi32
@@ -496,7 +379,7 @@ if(macx_x_)
         KDMACTOUCHBAR_BUILD_KDMACTOUCHBAR_SRC
     )
 
-    target_link_libraries(serial-studio PRIVATE
+    target_link_libraries(serial-studio
         "-framework Cocoa"
         ${CMAKE_CURRENT_SOURCE_DIR}/dll/macOS/libcrypto.a
         ${CMAKE_CURRENT_SOURCE_DIR}/dll/macOS/libssl.a
@@ -504,7 +387,7 @@ if(macx_x_)
 endif()
 
 if(LINUX)
-    target_link_libraries(serial-studio PRIVATE
+    target_link_libraries(serial-studio
         crypto
         ssl
     )
@@ -592,7 +475,7 @@ if((((QWT_CONFIG___contains___QwtPlot) AND (QWT_CONFIG___contains___QwtOpenGL)) 
         libs/qwt/src/qwt_plot_opengl_canvas.cpp libs/qwt/src/qwt_plot_opengl_canvas.h
     )
 
-    target_link_libraries(serial-studio PRIVATE
+    target_link_libraries(serial-studio
         Qt::OpenGLWidgets
     )
 endif()
@@ -624,20 +507,20 @@ if(QWT_CONFIG___contains___QwtPlot AND QWT_CONFIG___contains___QwtPolar)
 endif()
 
 if((QT_VERSION_MAJOR GREATER 4))
-    target_link_libraries(serial-studio PRIVATE
+    target_link_libraries(serial-studio
         Qt::Concurrent
         Qt::PrintSupport
     )
 endif()
 
 if(((QWT_CONFIG___contains___QwtSvg) AND ((QT_VERSION_MAJOR GREATER 4))) AND (TARGET Qt::Svg))
-    target_link_libraries(serial-studio PRIVATE
+    target_link_libraries(serial-studio
         Qt::Svg
     )
 endif()
 
 if((QWT_CONFIG___contains___QwtSvg) AND (NOT ((QT_VERSION_MAJOR GREATER 4))))
-    target_link_libraries(serial-studio PRIVATE
+    target_link_libraries(serial-studio
         Qt::Svg
     )
 endif()
@@ -649,19 +532,19 @@ if(NOT QWT_CONFIG___contains___QwtSvg)
 endif()
 
 if(QWT_CONFIG___contains___QwtOpenGL)
-    target_link_libraries(serial-studio PRIVATE
+    target_link_libraries(serial-studio
         Qt::OpenGL
     )
 endif()
 
 if(((QWT_CONFIG___contains___QwtOpenGL) AND ((QT_VERSION_MAJOR GREATER 4))) AND (TARGET Qt::OpenGL))
-    target_link_libraries(serial-studio PRIVATE
+    target_link_libraries(serial-studio
         Qt::OpenGL
     )
 endif()
 
 if((QWT_CONFIG___contains___QwtOpenGL) AND (NOT ((QT_VERSION_MAJOR GREATER 4))))
-    target_link_libraries(serial-studio PRIVATE
+    target_link_libraries(serial-studio
         Qt::OpenGL
     )
 endif()
@@ -703,10 +586,24 @@ if(QMQTT_WEBSOCKETS)
     )
 endif()
 
+#install(TARGETS serial-studio
+#    BUNDLE DESTINATION .
+#    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+#)
 install(TARGETS serial-studio
-    BUNDLE DESTINATION .
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
+        DESTINATION lib/${PROJECT_NAME})
+
+if(BUILD_TESTING)
+    find_package(ament_lint_auto REQUIRED)
+    # the following line skips the linter which checks for copyrights
+    # comment the line when a copyright and license is added to all source files
+    set(ament_cmake_copyright_FOUND TRUE)
+    # the following line skips cpplint (only works in a git repo)
+    # comment the line when this package is in a git repo and when
+    # a copyright and license is added to all source files
+    set(ament_cmake_cpplint_FOUND TRUE)
+    ament_lint_auto_find_test_dependencies()
+endif()
 
 qt_generate_deploy_qml_app_script(
     TARGET serial-studio
@@ -716,3 +613,4 @@ qt_generate_deploy_qml_app_script(
     MACOS_BUNDLE_POST_BUILD
 )
 install(SCRIPT ${deploy_script})
+ament_package()
