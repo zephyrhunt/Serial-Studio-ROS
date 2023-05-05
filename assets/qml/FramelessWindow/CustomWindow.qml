@@ -21,7 +21,8 @@
  */
 
 import QtQuick
-import QtQuick.Window as QtWindow
+
+import QtQuick.Window 2.15 as QtWindow
 
 import "../Widgets" as Widgets
 
@@ -200,6 +201,7 @@ QtWindow.Window {
     // Window border
     //
     Rectangle {
+        id: rectangle
         opacity: 0.8
         z: titlebar.z + 1
         radius: root.radius
@@ -214,6 +216,7 @@ QtWindow.Window {
     // Global mouse area to set cursor shape while resizing
     //
     MouseArea {
+        id: mouseArea
         z: titlebar.z - 1
         hoverEnabled: true
         anchors.fill: parent

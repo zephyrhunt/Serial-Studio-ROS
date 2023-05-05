@@ -23,9 +23,9 @@
 #pragma once
 
 // clang-format off
-#define APP_VERSION     "2.0.0"
-#define APP_DEVELOPER   "Alex Spataru"
-#define APP_NAME        "Serial Studio"
-#define APP_SUPPORT_URL "https://github.com/serial-studio"
+#define APP_VERSION     "2.0.1"
+#define APP_DEVELOPER   "Alex Spataru && Nichijou"
+#define APP_NAME        "Serial Studio ROS Nichijou"
+#define APP_SUPPORT_URL "https://github.com/zephyrhunt/Serial-Studio-ROS"
 #define APP_UPDATER_URL "https://raw.githubusercontent.com/Serial-Studio/Serial-Studio/master/updates.json"
 // clang-format on

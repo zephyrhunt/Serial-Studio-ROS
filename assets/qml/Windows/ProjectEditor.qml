@@ -21,7 +21,7 @@
  */
 
 import QtQuick
-import QtQuick.Window
+import QtQuick.Window 2.1
 import QtQuick.Layouts
 import QtQuick.Controls
 import Qt.labs.settings

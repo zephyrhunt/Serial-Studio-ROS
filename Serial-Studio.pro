@@ -43,6 +43,7 @@ CONFIG += qtquickcompiler                                # Pre-compile QML inter
 CONFIG += utf8_source                                    # Source code encoding
 QTPLUGIN += qsvg                                         # Fixes issues with windeployqt
 
+QT += qml
 QT += xml
 QT += svg
 QT += core
