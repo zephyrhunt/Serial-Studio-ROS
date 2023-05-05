@@ -20,6 +20,10 @@ Over my many CanSat-based competitions, I found myself writing and maintaing sev
 
 ![Software usage](doc/mockup.png)
 
+## User Develop
+
+Please read USER.md
+
 ## Install
 
 You can [download](https://github.com/Serial-Studio/Serial-Studio/releases/latest) and install Serial Studio for your preferred platform.
@@ -87,7 +91,7 @@ Alternatively, you can also use the following commands:
 
 	qmake
 	make -j4
-	
+
 ### Software architecture
 
 This is a simplified diagram that explains how the different Serial Studio modules interact with each other. You can find the DOXYGEN documentation by clicking [here](https://serial-studio.github.io/hackers/).
@@ -97,5 +101,4 @@ This is a simplified diagram that explains how the different Serial Studio modul
 ## Tipping
 
 If you find Serial Studio suitable for your needs, please consider [giving me a tip through PayPal](https://www.paypal.com/donate?hosted_button_id=XN68J47QJKYDE). Or, if you prefer to buy me a drink *personally* instead, just [send me a DM](https://instagram.com/aspatru) when you visit [Querétaro, Mexico](https://en.wikipedia.org/wiki/Querétaro), where I live. I look forward to meeting you!
-
 

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/doc/doxygen/doxygen-awesome-css" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libs/QSimpleUpdater" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libs/qmqtt" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libs/qtcsv" vcs="Git" />
+  </component>
+</project>
