@@ -64,9 +64,36 @@
 * 用户界面基于 QtQuick/QML，QML代码在./assets/qml文件夹中。
 * 命名规则在.clang-format中，使用clang-format-all src格式化所有代码。
 
+## 用户开发
 
+### 开发目标
 
+* 额外添加ROS交互
+* 添加UI设置功能
 
+### 开发记录
+
+#### qmake转cmake
+
+为了方便ROS的开发，需要把qmake工程转化为cmake工程。
+
+参考脚本qmake2cmake https://www.qt.io/blog/introducing-qmake2cmake 阅读README.md使用
+
+注意使用完脚本生成的CMakeList.txt还存在一点问题。
+
+* 因为安装了ROS，电脑被提前安装了Qt5，需要在cmake中指定具体的Qt的目录。
+
+  > ```cmake
+  > set(CMAKE_PREFIX_PATH "/home/nichijou/Qt/6.3.2/gcc_64")
+  > ```
+
+* 根据报错对CMakeLists.txt做一些修改，例如RESOURCE ，注释原有的RESOURCE
+
+  > ```cmake
+  > qt_add_resources(RESOURCE assets/Resources.qrc)
+  > ```
+
+* 此判断会被默认判断为假 if(QWT_CONFIG_____contains_QwtPlot)，需要将其注释，否则会部分文件无法找到。
 
 ​		
 
