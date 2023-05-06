@@ -19,96 +19,95 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 import Qt.labs.settings as QtSettings
-
 import "Devices" as Devices
 import "../../Windows" as Windows
 
 Control {
     id: root
-
-    //
     // Save settings
-    //
     QtSettings.Settings {
-        property alias driver: _driverCombo.currentIndex
-        property alias parity: serial.parity
+        property alias address: network.address
+        property alias autoReconnect: serial.autoReconnect
         property alias baudRate: serial.baudRate
         property alias dataBits: serial.dataBits
-        property alias stopBits: serial.stopBits
+        property alias driver: _driverCombo.currentIndex
         property alias flowControl: serial.flowControl
-        property alias autoReconnect: serial.autoReconnect
-        property alias address: network.address
-        property alias tcpPort: network.tcpPort
+        property alias parity: serial.parity
         property alias socketType: network.socketType
+        property alias stopBits: serial.stopBits
+        property alias tcpPort: network.tcpPort
         property alias udpLocalPort: network.udpLocalPort
-        property alias udpRemotePort: network.udpRemotePort
         property alias udpMulticastEnabled: network.udpMulticastEnabled
         property alias udpProcessDatagramsDirectly: network.udpProcessDatagramsDirectly
+        property alias udpRemotePort: network.udpRemotePort
     }
-
     ColumnLayout {
         id: layout
         anchors.fill: parent
         anchors.margins: app.spacing
 
-        //
         // Device type selector
-        //
         RowLayout {
-            spacing: app.spacing
             Layout.fillWidth: true
+            spacing: app.spacing
 
             Label {
-                text: qsTr("Data source") + ":"
                 Layout.alignment: Qt.AlignVCenter
+                text: qsTr("Data source") + ":"
             }
-
             ComboBox {
                 id: _driverCombo
-                Layout.fillWidth: true
                 Layout.alignment: Qt.AlignVCenter
+                Layout.fillWidth: true
                 model: Cpp_IO_Manager.availableDrivers()
+
                 onCurrentIndexChanged: Cpp_IO_Manager.selectedDriver = currentIndex
             }
         }
-
-        //
         // Device configuration
-        //
         StackLayout {
             id: stack
-            clip: true
-            Layout.fillWidth: true
             Layout.fillHeight: true
+            Layout.fillWidth: true
+            clip: true
             currentIndex: Cpp_IO_Manager.selectedDriver
 
             Devices.Serial {
                 id: serial
-                Layout.fillWidth: true
                 Layout.fillHeight: true
+                Layout.fillWidth: true
+
                 background: TextField {
                     enabled: false
                 }
             }
-
             Devices.Network {
                 id: network
-                Layout.fillWidth: true
                 Layout.fillHeight: true
+                Layout.fillWidth: true
+
                 background: TextField {
                     enabled: false
                 }
             }
-
             Devices.BluetoothLE {
                 id: bluetoothLE
-                Layout.fillWidth: true
                 Layout.fillHeight: true
+                Layout.fillWidth: true
+
+                background: TextField {
+                    enabled: false
+                }
+            }
+            Devices.Ros {
+                id: ros
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+
                 background: TextField {
                     enabled: false
                 }

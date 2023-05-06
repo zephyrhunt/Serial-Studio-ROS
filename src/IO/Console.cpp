@@ -34,6 +34,7 @@
 
 /**
  * Generates a hexdump of the given data
+ * Display data with hex mode
  */
 static QString HexDump(const char *data, const size_t size)
 {

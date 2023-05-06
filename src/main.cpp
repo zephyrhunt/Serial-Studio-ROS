@@ -31,6 +31,7 @@
 #include <Misc/Utilities.h>
 #include <Misc/ModuleManager.h>
 
+#include "QNode.h"
 #ifdef Q_OS_WIN
 #    include <windows.h>
 #endif

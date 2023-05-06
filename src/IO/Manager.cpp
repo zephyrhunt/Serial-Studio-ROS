@@ -26,6 +26,7 @@
 #include <IO/Drivers/Serial.h>
 #include <IO/Drivers/Network.h>
 #include <IO/Drivers/BluetoothLE.h>
+#include <IO/Drivers/Ros.h>
 
 #include <MQTT/Client.h>
 
@@ -64,16 +65,12 @@ IO::Manager::Manager()
     , m_separatorSequence(",")
 {
     // Set initial settings
-    setMaxBufferSize(1024 * 1024);
+    setMaxBufferSize(1024 * 1024);  //can be set
     setSelectedDriver(SelectedDriver::Serial);
-
-    // clang-format off
 
     // Update connect button status when device type is changed
     connect(this, &IO::Manager::selectedDriverChanged,
             this, &IO::Manager::configurationChanged);
-
-    // clang-format on
 }
 
 /**
@@ -157,6 +154,7 @@ IO::HAL_Driver *IO::Manager::driver()
  * Returns the currently selected data source, possible return values:
  * - @c DataSource::Serial  use a serial port as a data source
  * - @c DataSource::Network use a network port as a data source
+ * - @c DataSource::Ros     use ros topic as data source
  */
 IO::Manager::SelectedDriver IO::Manager::selectedDriver() const
 {
@@ -167,6 +165,7 @@ IO::Manager::SelectedDriver IO::Manager::selectedDriver() const
  * Returns the start sequence string used by the application to know where to consider
  * that a frame begins. If the start sequence is empty, then the application shall ignore
  * incoming data. The only thing that wont ignore the incoming data will be the console.
+ * the default is "/ *"
  */
 QString IO::Manager::startSequence() const
 {
@@ -177,6 +176,7 @@ QString IO::Manager::startSequence() const
  * Returns the finish sequence string used by the application to know where to consider
  * that a frame ends. If the start sequence is empty, then the application shall ignore
  * incoming data. The only thing that wont ignore the incoming data will be the console.
+ * the default is "* /"
  */
 QString IO::Manager::finishSequence() const
 {
@@ -186,6 +186,7 @@ QString IO::Manager::finishSequence() const
 /**
  * Returns the separator sequence string used by the application to know where to consider
  * that a data item ends.
+ * the default is ", "
  */
 QString IO::Manager::separatorSequence() const
 {
@@ -201,6 +202,7 @@ StringList IO::Manager::availableDrivers() const
     list.append(tr("Serial port"));
     list.append(tr("Network port"));
     list.append(tr("Bluetooth LE device"));
+    list.append(tr("ROS2 node"));
     return list;
 }
 
@@ -413,6 +415,8 @@ void IO::Manager::setSelectedDriver(const IO::Manager::SelectedDriver &driver)
     else if (selectedDriver() == SelectedDriver::BluetoothLE)
         setDriver(&(Drivers::BluetoothLE::instance()));
 
+    else if (selectedDriver() == SelectedDriver::ROS2)
+        setDriver(&(Drivers::Ros::instance()));
     // Invalid driver
     else
         setDriver(Q_NULLPTR);

@@ -19,331 +19,329 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 import QtQuick
 import QtQuick.Window
 import QtQuick.Layouts
 import QtQuick.Controls
-
 import "../Widgets" as Widgets
 
 Control {
     id: root
 
-    //
-    // Reference to parent window to be able to drag it with the toolbar
-    //
-    property Window window
-
-    //
     // Dummy string to increase width of buttons
-    //
     readonly property string _btSpacer: "  "
-
-    //
-    // Custom signals
-    //
-    signal setupClicked()
-    signal consoleClicked()
-    signal dashboardClicked()
-    signal projectEditorClicked()
-
-    //
-    // Aliases to button check status
-    //
-    property alias setupChecked: setupBt.checked
     property alias consoleChecked: consoleBt.checked
     property alias dashboardChecked: dashboardBt.checked
+    // Aliases to button check status
+    property alias setupChecked: setupBt.checked
+    // Reference to parent window to be able to drag it with the toolbar
+    property Window window
 
-    //
+    signal consoleClicked
+    signal dashboardClicked
+    signal projectEditorClicked
+    signal ros2WsClicked
+    // Custom signals
+    signal setupClicked
+
     // Connections with mac touchbar
-    //
     Connections {
-        target: Cpp_Misc_MacExtras
-
-        function onSetupClicked() {
-            setupBt.clicked()
-            Cpp_Misc_MacExtras.setSetupChecked(setupBt.checked)
-        }
-
         function onConsoleClicked() {
-            consoleBt.clicked()
-            Cpp_Misc_MacExtras.setConsoleChecked(consoleBt.checked)
+            consoleBt.clicked();
+            Cpp_Misc_MacExtras.setConsoleChecked(consoleBt.checked);
         }
-
         function onDashboardClicked() {
-            dashboardBt.clicked()
-            Cpp_Misc_MacExtras.setDashboardChecked(dashboardBt.checked)
+            dashboardBt.clicked();
+            Cpp_Misc_MacExtras.setDashboardChecked(dashboardBt.checked);
         }
-    }
+        function onSetupClicked() {
+            setupBt.clicked();
+            Cpp_Misc_MacExtras.setSetupChecked(setupBt.checked);
+        }
 
-    //
+        target: Cpp_Misc_MacExtras
+    }
     // Toolbar shadow
-    //
     Widgets.Shadow {
         anchors.fill: bg
     }
-
-    //
     // Background gradient + border
-    //
     Rectangle {
         id: bg
         anchors.fill: parent
 
         gradient: Gradient {
-            GradientStop { position: 0; color: Cpp_ThemeManager.toolbarGradient1 }
-            GradientStop { position: 1; color: Cpp_ThemeManager.toolbarGradient2 }
+            GradientStop {
+                color: Cpp_ThemeManager.toolbarGradient1
+                position: 0
+            }
+            GradientStop {
+                color: Cpp_ThemeManager.toolbarGradient2
+                position: 1
+            }
         }
 
         Rectangle {
-            border.width: 1
             anchors.fill: parent
+            border.color: Qt.darker(Cpp_ThemeManager.toolbarGradient2, 1.5)
+            border.width: 1
             color: "transparent"
             visible: Cpp_ThemeManager.titlebarSeparator
-            border.color: Qt.darker(Cpp_ThemeManager.toolbarGradient2, 1.5)
         }
-
         Rectangle {
+            color: Qt.darker(Cpp_ThemeManager.toolbarGradient1, 1.5)
             height: 1
             visible: Cpp_ThemeManager.titlebarSeparator
-            color: Qt.darker(Cpp_ThemeManager.toolbarGradient1, 1.5)
 
             anchors {
+                bottom: parent.bottom
                 left: parent.left
                 right: parent.right
-                bottom: parent.bottom
             }
         }
     }
-
-    //
     // Toolbar icons
-    //
     RowLayout {
-        spacing: app.spacing
         anchors.fill: parent
         anchors.margins: app.spacing
+        spacing: app.spacing
 
         Button {
             id: setupBt
-
-            flat: true
-            icon.width: 24
-            icon.height: 24
             Layout.fillHeight: true
-            onClicked: root.setupClicked()
-            text: qsTr("Setup") + _btSpacer
-            icon.source: "qrc:/icons/settings.svg"
+            flat: true
             icon.color: Cpp_ThemeManager.menubarText
-            palette.buttonText: Cpp_ThemeManager.menubarText
+            icon.height: 24
+            icon.source: "qrc:/icons/settings.svg"
+            icon.width: 24
             palette.button: Cpp_ThemeManager.toolbarGradient1
+            palette.buttonText: Cpp_ThemeManager.menubarText
             palette.window: Cpp_ThemeManager.toolbarGradient1
-            onCheckedChanged: Cpp_Misc_MacExtras.setSetupChecked(checked)
+            text: qsTr("Setup") + _btSpacer
 
             background: Rectangle {
-                radius: 3
+                border.color: "#040600"
                 border.width: 1
                 color: "transparent"
-                border.color: "#040600"
                 opacity: parent.checked ? 0.2 : 0.0
+                radius: 3
 
                 Rectangle {
-                    border.width: 1
-                    color: "#626262"
                     anchors.fill: parent
-                    border.color: "#c2c2c2"
-                    radius: parent.radius - 1
                     anchors.margins: parent.border.width
+                    border.color: "#c2c2c2"
+                    border.width: 1
+                    color: "#524545"
+                    radius: parent.radius - 1
                 }
             }
+
+            onCheckedChanged: Cpp_Misc_MacExtras.setSetupChecked(checked)
+            onClicked: root.setupClicked()
         }
 
         Button {
             id: consoleBt
-
-            flat: true
-            icon.width: 24
-            icon.height: 24
             Layout.fillHeight: true
             enabled: dashboardBt.enabled
-            onClicked: root.consoleClicked()
-            icon.source: "qrc:/icons/code.svg"
-            text: qsTr("Console") + _btSpacer
+            flat: true
             icon.color: Cpp_ThemeManager.menubarText
-            palette.buttonText: Cpp_ThemeManager.menubarText
+            icon.height: 24
+            icon.source: "qrc:/icons/code.svg"
+            icon.width: 24
             palette.button: Cpp_ThemeManager.toolbarGradient1
+            palette.buttonText: Cpp_ThemeManager.menubarText
             palette.window: Cpp_ThemeManager.toolbarGradient1
-            onCheckedChanged: Cpp_Misc_MacExtras.setConsoleChecked(checked)
+            text: qsTr("Console") + _btSpacer
 
             background: Rectangle {
-                radius: 3
+                border.color: "#040600"
                 border.width: 1
                 color: "transparent"
-                border.color: "#040600"
                 opacity: parent.checked ? 0.2 : 0.0
+                radius: 3
 
                 Rectangle {
+                    anchors.fill: parent
+                    anchors.margins: parent.border.width
+                    border.color: "#c2c2c2"
                     border.width: 1
                     color: "#626262"
-                    anchors.fill: parent
-                    border.color: "#c2c2c2"
                     radius: parent.radius - 1
-                    anchors.margins: parent.border.width
                 }
             }
+
+            onCheckedChanged: Cpp_Misc_MacExtras.setConsoleChecked(checked)
+            onClicked: root.consoleClicked()
+        }
+
+        Button {
+            id: ros2Bt
+            Layout.fillHeight: true
+            flat: true
+            icon.color: Cpp_ThemeManager.menubarText
+            icon.height: 24
+            icon.source: "qrc:/icons/group.svg"
+            icon.width: 24
+            palette.button: Cpp_ThemeManager.toolbarGradient1
+            palette.buttonText: Cpp_ThemeManager.menubarText
+            palette.window: Cpp_ThemeManager.toolbarGradient1
+            text: qsTr("ROS2") + _btSpacer
+
+            background: Rectangle {
+                border.color: "#63968d"
+                border.width: 1
+                color: "transparent"
+                opacity: parent.checked ? 0.2 : 0.0
+                radius: 3
+
+                Rectangle {
+                    anchors.fill: parent
+                    anchors.margins: parent.border.width
+                    border.color: "#c2c2c2"
+                    border.width: 1
+                    color: "#524545"
+                    radius: parent.radius - 1
+                }
+            }
+
+            // onCheckedChanged: Cpp_Misc_MacExtras.setSetupChecked(checked)
+            onClicked: root.ros2Clicked()
         }
 
         Button {
             id: dashboardBt
-
-            flat: true
-            icon.width: 24
-            icon.height: 24
             Layout.fillHeight: true
-            opacity: enabled ? 1 : 0.5
-            onClicked: root.dashboardClicked()
             enabled: Cpp_UI_Dashboard.available
-            text: qsTr("Dashboard") + _btSpacer
-            icon.source: "qrc:/icons/dashboard.svg"
+            flat: true
             icon.color: Cpp_ThemeManager.menubarText
-            palette.buttonText: Cpp_ThemeManager.menubarText
+            icon.height: 24
+            icon.source: "qrc:/icons/dashboard.svg"
+            icon.width: 24
+            opacity: enabled ? 1 : 0.5
             palette.button: Cpp_ThemeManager.toolbarGradient1
+            palette.buttonText: Cpp_ThemeManager.menubarText
             palette.window: Cpp_ThemeManager.toolbarGradient1
-            onCheckedChanged: Cpp_Misc_MacExtras.setDashboardChecked(checked)
-            onEnabledChanged: Cpp_Misc_MacExtras.setDashboardEnabled(enabled)
+            text: qsTr("Dashboard") + _btSpacer
 
             background: Rectangle {
-                radius: 3
+                border.color: "#040600"
                 border.width: 1
                 color: "transparent"
-                border.color: "#040600"
                 opacity: parent.checked ? 0.2 : 0.0
+                radius: 3
 
                 Rectangle {
+                    anchors.fill: parent
+                    anchors.margins: parent.border.width
+                    border.color: "#c2c2c2"
                     border.width: 1
                     color: "#626262"
-                    anchors.fill: parent
-                    border.color: "#c2c2c2"
                     radius: parent.radius - 1
-                    anchors.margins: parent.border.width
                 }
             }
-        }
 
-        //
+            onCheckedChanged: Cpp_Misc_MacExtras.setDashboardChecked(checked)
+            onClicked: root.dashboardClicked()
+            onEnabledChanged: Cpp_Misc_MacExtras.setDashboardEnabled(enabled)
+        }
         // Window drag handler
-        //
         Item {
-            height: parent.height
             Layout.fillWidth: true
+            height: parent.height
 
             MouseArea {
                 anchors.fill: parent
+
                 onPressedChanged: {
                     if (pressed)
-                        window.startSystemMove()
+                        window.startSystemMove();
                 }
             }
         }
-
         Button {
-            flat: true
-            icon.width: 24
-            icon.height: 24
             Layout.fillHeight: true
+            flat: true
+            icon.color: Cpp_ThemeManager.menubarText
+            icon.height: 24
             icon.source: "qrc:/icons/json.svg"
-            onClicked: root.projectEditorClicked()
-            text: qsTr("Project Editor") + _btSpacer
-            icon.color: Cpp_ThemeManager.menubarText
-            palette.buttonText: Cpp_ThemeManager.menubarText
-            palette.button: Cpp_ThemeManager.toolbarGradient1
-            palette.window: Cpp_ThemeManager.toolbarGradient1
-
-            background: Item {}
-        }
-
-        Button {
-            flat: true
             icon.width: 24
-            icon.height: 24
-            Layout.fillHeight: true
-            opacity: enabled ? 1 : 0.5
-            enabled: !Cpp_CSV_Player.isOpen
-            icon.source: "qrc:/icons/open.svg"
-            text: qsTr("Open CSV") + _btSpacer
-            icon.color: Cpp_ThemeManager.menubarText
-            palette.buttonText: Cpp_ThemeManager.menubarText
             palette.button: Cpp_ThemeManager.toolbarGradient1
+            palette.buttonText: Cpp_ThemeManager.menubarText
             palette.window: Cpp_ThemeManager.toolbarGradient1
+            text: qsTr("Project Editor") + _btSpacer
+
+            background: Item {
+            }
+
+            onClicked: root.projectEditorClicked()
+        }
+        Button {
+            Layout.fillHeight: true
+            enabled: !Cpp_CSV_Player.isOpen
+            flat: true
+            icon.color: Cpp_ThemeManager.menubarText
+            icon.height: 24
+            icon.source: "qrc:/icons/open.svg"
+            icon.width: 24
+            opacity: enabled ? 1 : 0.5
+            palette.button: Cpp_ThemeManager.toolbarGradient1
+            palette.buttonText: Cpp_ThemeManager.menubarText
+            palette.window: Cpp_ThemeManager.toolbarGradient1
+            text: qsTr("Open CSV") + _btSpacer
+
+            background: Item {
+            }
 
             onClicked: {
                 if (Cpp_CSV_Export.isOpen)
-                    Cpp_CSV_Export.openCurrentCsv()
+                    Cpp_CSV_Export.openCurrentCsv();
                 else
-                    Cpp_CSV_Player.openFile()
+                    Cpp_CSV_Player.openFile();
             }
-
-            background: Item{}
         }
 
+        // connect button
         Button {
             id: connectBt
-
-            //
-            // Button properties
-            //
-            flat: true
-            icon.width: 24
-            icon.height: 24
-            font.bold: true
             Layout.fillHeight: true
-
-            //
             // Connection-dependent
-            //
             checked: Cpp_IO_Manager.connected
-            text: (checked ? qsTr("Disconnect") :
-                             qsTr("Connect")) + _btSpacer
-            icon.source: checked ? "qrc:/icons/disconnect.svg" :
-                                   "qrc:/icons/connect.svg"
-            palette.button: Cpp_ThemeManager.toolbarGradient1
-            palette.window: Cpp_ThemeManager.toolbarGradient1
-            icon.color: checked ? Cpp_ThemeManager.connectButtonChecked :
-                                  Cpp_ThemeManager.connectButtonUnchecked
-            palette.buttonText: checked ? Cpp_ThemeManager.connectButtonChecked :
-                                          Cpp_ThemeManager.connectButtonUnchecked
-
-            //
-            // Only enable button if it can be clicked
-            //
-            opacity: enabled ? 1 : 0.5
             enabled: Cpp_IO_Manager.configurationOk
+            // Button properties
+            flat: true
+            font.bold: true
+            icon.color: checked ? Cpp_ThemeManager.connectButtonChecked : Cpp_ThemeManager.connectButtonUnchecked
+            icon.height: 24
+            icon.source: checked ? "qrc:/icons/disconnect.svg" : "qrc:/icons/connect.svg"
+            icon.width: 24
+            // Only enable button if it can be clicked
+            opacity: enabled ? 1 : 0.5
+            palette.button: Cpp_ThemeManager.toolbarGradient1
+            palette.buttonText: checked ? Cpp_ThemeManager.connectButtonChecked : Cpp_ThemeManager.connectButtonUnchecked
+            palette.window: Cpp_ThemeManager.toolbarGradient1
+            text: (checked ? qsTr("Disconnect") : qsTr("Connect")) + _btSpacer
 
-            //
-            // Connect/disconnect device when button is clicked
-            //
-            onClicked: Cpp_IO_Manager.toggleConnection()
-
-            //
             // Custom button background
-            //
             background: Rectangle {
-                radius: 3
+                border.color: "#040600"
                 border.width: 1
                 color: "transparent"
-                border.color: "#040600"
                 opacity: parent.checked ? 0.2 : 0.0
+                radius: 3
 
                 Rectangle {
+                    anchors.fill: parent
+                    anchors.margins: parent.border.width
+                    border.color: "#c2c2c2"
                     border.width: 1
                     color: "#626262"
-                    anchors.fill: parent
-                    border.color: "#c2c2c2"
                     radius: parent.radius - 1
-                    anchors.margins: parent.border.width
                 }
             }
+
+            // Connect/disconnect device when button is clicked
+            onClicked: Cpp_IO_Manager.toggleConnection()
         }
     }
 }

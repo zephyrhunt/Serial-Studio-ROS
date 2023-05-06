@@ -38,6 +38,7 @@
 #include <IO/Drivers/Serial.h>
 #include <IO/Drivers/Network.h>
 #include <IO/Drivers/BluetoothLE.h>
+#include "IO/Drivers/Ros.h"
 
 #include <Misc/MacExtras.h>
 #include <Misc/Utilities.h>
@@ -168,6 +169,7 @@ void Misc::ModuleManager::initializeQmlInterface()
     auto miscThemeManager = &Misc::ThemeManager::instance();
     auto projectCodeEditor = &Project::CodeEditor::instance();
     auto ioBluetoothLE = &IO::Drivers::BluetoothLE::instance();
+    auto rosNode = &IO::Drivers::Ros::instance();
 
     // Initialize third-party modules
     auto updater = QSimpleUpdater::getInstance();
@@ -226,6 +228,9 @@ void Misc::ModuleManager::initializeQmlInterface()
     c->setContextProperty("Cpp_Misc_MacExtras", miscMacExtras);
     c->setContextProperty("Cpp_Misc_Utilities", miscUtilities);
     c->setContextProperty("Cpp_IO_Bluetooth_LE", ioBluetoothLE);
+
+    c->setContextProperty("Cpp_IO_RosNode", rosNode);
+
     c->setContextProperty("Cpp_ThemeManager", miscThemeManager);
     c->setContextProperty("Cpp_Misc_Translator", miscTranslator);
     c->setContextProperty("Cpp_Misc_TimerEvents", miscTimerEvents);

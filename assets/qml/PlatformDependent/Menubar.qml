@@ -287,8 +287,29 @@ MenuBar {
             }
         }
     }
-
     //
+    // ROS2 menu
+    //
+    Menu {
+        title: qsTr("ROS2")
+
+        DecentMenuItem {
+            checkable: true
+            checked: Cpp_IO_Console.autoscroll
+            text: qsTr("ros console")
+
+            onTriggered: Cpp_IO_Console.autoscroll = checked
+        }
+        DecentMenuItem {
+            checkable: true
+            checked: Cpp_IO_Console.showTimestamp
+            text: qsTr("image")
+
+            onTriggered: Cpp_IO_Console.showTimestamp = checked
+        }
+        MenuSeparator {}
+    }
+
     // Help menu
     //
     Menu {
@@ -310,24 +331,6 @@ MenuBar {
         }
 
         DecentMenuItem {
-            checkable: true
-            visible: Cpp_UpdaterEnabled
-            enabled: Cpp_UpdaterEnabled
-            checked: mainWindow.automaticUpdates
-            onTriggered: mainWindow.automaticUpdates = checked
-            text: qsTr("Auto-updater")
-        }
-
-        DecentMenuItem {
-            visible: Cpp_UpdaterEnabled
-            enabled: Cpp_UpdaterEnabled
-            onTriggered: app.checkForUpdates()
-            text: qsTr("Check for updates") + "..."
-        }
-
-        MenuSeparator{}
-
-        DecentMenuItem {
             text: qsTr("Project website") + "..."
             onTriggered: Qt.openUrlExternally("https://www.alex-spataru.com/serial-studio")
         }
@@ -336,13 +339,6 @@ MenuBar {
             sequence: "f1"
             text: qsTr("Documentation/wiki") + "..."
             onTriggered: Qt.openUrlExternally("https://github.com/Serial-Studio/Serial-Studio/wiki")
-        }
-
-        MenuSeparator{}
-
-        DecentMenuItem {
-            text: qsTr("Report bug") + "..."
-            onTriggered: Qt.openUrlExternally("https://github.com/Serial-Studio/Serial-Studio/issues")
         }
     }
 }

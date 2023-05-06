@@ -19,100 +19,90 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 import QtQuick
 import QtQuick.Window
 import QtQuick.Controls
-
 import "Windows" as Windows
 
 Item {
     id: app
 
-    //
-    // Global propeties
-    //
-    readonly property int spacing: 8
-    readonly property string monoFont: "Roboto Mono"
-
-    //
     // Access to dialogs & windows
-    //
     property Windows.About aboutDialog: null
+    property Windows.Acknowledgements acknowledgementsDialog: null
+    property Windows.CsvPlayer csvPlayerDialog: null
     property Windows.Donate donateDialog: null
     property Windows.MainWindow mainWindow: null
-    property Windows.CsvPlayer csvPlayerDialog: null
+    readonly property string monoFont: "Roboto Mono"
     property Windows.ProjectEditor projectEditorWindow: null
-    property Windows.Acknowledgements acknowledgementsDialog: null
+    // Global propeties
+    readonly property int spacing: 8
 
-    //
     // Check for updates (non-silent mode)
-    //
     function checkForUpdates() {
-        Cpp_Updater.setNotifyOnFinish(Cpp_AppUpdaterUrl, true)
-        Cpp_Updater.checkForUpdates(Cpp_AppUpdaterUrl)
+    // Cpp_Updater.setNotifyOnFinish(Cpp_AppUpdaterUrl, true)
+    // Cpp_Updater.checkForUpdates(Cpp_AppUpdaterUrl)
+    // cancle update
     }
 
-    //
     // MainWindow
-    //
     Loader {
         asynchronous: true
+
         sourceComponent: Windows.MainWindow {
             Component.onCompleted: {
-                app.forceActiveFocus()
-                app.mainWindow = this
+                app.forceActiveFocus();
+                app.mainWindow = this;
             }
         }
     }
-
-    //
     // About window
-    //
     Loader {
         asynchronous: true
+
         sourceComponent: Windows.About {
             Component.onCompleted: app.aboutDialog = this
         }
     }
-
-    //
     // CSV player window
-    //
     Loader {
         asynchronous: true
+
         sourceComponent: Windows.CsvPlayer {
             Component.onCompleted: app.csvPlayerDialog = this
         }
     }
-
-    //
+    Windows.CsvPlayer {
+        id: csvPlayer
+        x: 298
+        y: 658
+    }
     // Project editor dialog
-    //
     Loader {
         asynchronous: true
+
         sourceComponent: Windows.ProjectEditor {
             Component.onCompleted: app.projectEditorWindow = this
         }
     }
 
-    //
-    // Donations dialog
-    //
-    Loader {
-        asynchronous: false
-        sourceComponent: Windows.Donate {
-            Component.onCompleted: app.donateDialog = this
-        }
-    }
+    // //
+    // // Donations dialog
+    // //
+    // Loader {
+    //     asynchronous: false
+    //     sourceComponent: Windows.Donate {
+    //         Component.onCompleted: app.donateDialog = this
+    //     }
+    // }
 
-    //
-    // Acknowledgements dialog
-    //
-    Loader {
-        asynchronous: true
-        sourceComponent: Windows.Acknowledgements {
-            Component.onCompleted: app.acknowledgementsDialog = this
-        }
-    }
+    // //
+    // // Acknowledgements dialog
+    // //
+    // Loader {
+    //     asynchronous: true
+    //     sourceComponent: Windows.Acknowledgements {
+    //         Component.onCompleted: app.acknowledgementsDialog = this
+    //     }
+    // }
 }

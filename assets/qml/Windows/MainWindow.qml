@@ -11,6 +11,7 @@ import "../ProjectEditor"
 import "../FramelessWindow" as FramelessWindow
 import "../PlatformDependent" as PlatformDependent
 
+
 FramelessWindow.CustomWindow {
     id: root
 
@@ -23,7 +24,7 @@ FramelessWindow.CustomWindow {
     // Customize window border
     //
     showIcon: true
-    borderWidth: 1
+    borderWidth: 2
     borderColor: Qt.darker(Cpp_ThemeManager.toolbarGradient2, 1.5)
 
     //
@@ -72,16 +73,16 @@ FramelessWindow.CustomWindow {
     title: Cpp_AppName
     width: minimumWidth
     height: minimumHeight
-    minimumWidth: 1120 + 2 * root.shadowMargin
+    minimumWidth: 920 + 2 * root.shadowMargin
     backgroundColor: Cpp_ThemeManager.windowBackground
     minimumHeight: 650 + 2 * root.shadowMargin + root.titlebar.height
 
-    //
+    // ------------------------------
     // Startup code
-    //
+    // ------------------------------
     Component.onCompleted: {
         // Load welcome text
-        terminal.showWelcomeGuide()
+        // terminal.showWelcomeGuide()
 
         // Increment app launch count
         ++appLaunchCount
@@ -108,24 +109,7 @@ FramelessWindow.CustomWindow {
         root.requestActivate()
         root.requestUpdate()
 
-        // Show donations dialog every 15 launches
-        if (root.appLaunchCount % 15 == 0 && !app.donateDialog.doNotShowAgain)
-            app.donateDialog.showAutomatically()
-
-        // Ask user if he/she wants to enable automatic updates
-        if (root.appLaunchCount == 2 && Cpp_UpdaterEnabled) {
-            if (Cpp_Misc_Utilities.askAutomaticUpdates()) {
-                root.automaticUpdates = true
-                Cpp_Updater.checkForUpdates(Cpp_AppUpdaterUrl)
-            }
-
-            else
-                root.automaticUpdates = false
-        }
-
-        // Check for updates (if we are allowed)
-        if (root.automaticUpdates && Cpp_UpdaterEnabled)
-            Cpp_Updater.checkForUpdates(Cpp_AppUpdaterUrl)
+        // remove donation and update
     }
 
     //
@@ -255,7 +239,7 @@ FramelessWindow.CustomWindow {
         }
 
         ColumnLayout {
-            spacing: 0
+            spacing: 3
             anchors.fill: parent
 
             //
@@ -271,6 +255,7 @@ FramelessWindow.CustomWindow {
                 setupChecked: root.setupVisible
                 consoleChecked: root.consoleVisible
                 dashboardChecked: root.dashboardVisible
+
                 onProjectEditorClicked: app.projectEditorWindow.show()
                 onSetupClicked: setup.visible ? setup.hide() : setup.show()
 
@@ -281,7 +266,6 @@ FramelessWindow.CustomWindow {
                         if (stack.currentItem != dashboard)
                             stack.push(dashboard)
                     }
-
                     else
                         root.showConsole()
                 }
@@ -294,7 +278,7 @@ FramelessWindow.CustomWindow {
             }
 
             //
-            // Console, dashboard & setup panel
+            // Console, dashboard & setup panel & ros2 panel
             //
             RowLayout {
                 spacing: 0

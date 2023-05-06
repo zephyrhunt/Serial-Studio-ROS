@@ -120,7 +120,8 @@ public:
     {
         Serial,
         Network,
-        BluetoothLE
+        BluetoothLE,
+        ROS2
     };
     Q_ENUM(SelectedDriver)
 

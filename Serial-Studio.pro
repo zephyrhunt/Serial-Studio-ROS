@@ -187,7 +187,8 @@ HEADERS += \
     src/UI/Widgets/LEDPanel.h \
     src/UI/Widgets/MultiPlot.h \
     src/UI/Widgets/Plot.h \
-    src/UI/Widgets/Terminal.h
+    src/UI/Widgets/Terminal.h \
+
 
 SOURCES += \
     src/CSV/Export.cpp \

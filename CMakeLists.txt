@@ -23,14 +23,11 @@ find_package(rosidl_default_generators REQUIRED)
 find_package(std_msgs REQUIRED)
 #find_package(sensor_msgs REQUIRED)
 
-set(ROS_SOURCES
-        ROS/QNode.cpp
-        ROS/QNode.h
-        )
+set(ROS_SOURCE src/ROS/QNode.cpp src/ROS/QNode.h src/IO/Drivers/Ros.cpp src/IO/Drivers/Ros.h)
 
 qt_standard_project_setup()
 qt_add_resources(RESOURCE assets/Resources.qrc)
-
+#add_executable(serial-studio ${ROS_SOURCES})
 # 把add_executable和link结合在了一起，不好
 qt_add_executable(serial-studio WIN32 MACOSX_BUNDLE
     libs/QMapControl/src/arrowpoint.cpp libs/QMapControl/src/arrowpoint.h
@@ -210,7 +207,7 @@ qt_add_executable(serial-studio WIN32 MACOSX_BUNDLE
     src/UI/Widgets/Terminal.cpp src/UI/Widgets/Terminal.h
     src/main.cpp
     ${RESOURCE}
-        ${ROS_RESOURCE}
+    ${ROS_SOURCE}
 )
 
 qt_add_qml_module(serial-studio
@@ -231,7 +228,9 @@ qt_add_qml_module(serial-studio
         assets/qml/Panes/SetupPanes/Devices/BluetoothLE.qml
         assets/qml/Panes/SetupPanes/Devices/Network.qml
         assets/qml/Panes/SetupPanes/Devices/Serial.qml
+        assets/qml/Panes/SetupPanes/Devices/Ros.qml
         assets/qml/Panes/SetupPanes/Hardware.qml
+        assets/qml/Panes/SetupPanes/Ros2.qml
         assets/qml/Panes/SetupPanes/MQTT.qml
         assets/qml/Panes/SetupPanes/Settings.qml
         assets/qml/Panes/Console.qml

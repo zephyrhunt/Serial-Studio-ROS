@@ -115,7 +115,9 @@
         <file>qml/Panes/SetupPanes/Devices/BluetoothLE.qml</file>
         <file>qml/Panes/SetupPanes/Devices/Network.qml</file>
         <file>qml/Panes/SetupPanes/Devices/Serial.qml</file>
+        <file>qml/Panes/SetupPanes/Devices/Ros.qml</file>
         <file>qml/Panes/SetupPanes/Hardware.qml</file>
+        <file>qml/Panes/SetupPanes/Ros2.qml</file>
         <file>qml/Panes/SetupPanes/MQTT.qml</file>
         <file>qml/Panes/SetupPanes/Settings.qml</file>
         <file>qml/Panes/Console.qml</file>

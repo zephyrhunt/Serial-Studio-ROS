@@ -95,5 +95,83 @@
 
 * 此判断会被默认判断为假 if(QWT_CONFIG_____contains_QwtPlot)，需要将其注释，否则会部分文件无法找到。
 
-​		
+​		存在问题
+
+*  qt.tlsbackend.ossl: Incompatible version of OpenSSL (built with OpenSSL 1.x, runtime version is >= 3.x)
+   qt版本不符合
+*  qt.bluetooth.bluez: Missing CAP_NET_ADMIN permission. Cannot determine whether a found address is of random or public type.
+   蓝牙权限问题
+*  TODO:后续再解决这个问题
+
+#### 将工程设置为ROS2 Pack
+
+一个ros2的pack包需要里面包含package.xml和CMakeLists.txt文件，其中后者在原有的基础上进行修改即可，前者需要复制创建包默认生成的xml文件稍作修改即可。
+
+注意可能会遇到一些奇怪的问题
+
+* target_link_libraries不能同时有带关键字和不带关键字的版本，修改建议，把CMakeLists.txt中所有target_link_libraries中的PRIVATE关键字去除，ROS2的ament_target_dependencies调用的是不带关键字的。去除后发现仍有同样的问题，出现在Qt6CoreMacros.cmake和Qt6QmlMacros.cmake中，此处对源码进行修改，根本原因在于使用了qt_add_executable，这个命令同时执行了add_exectuable和targe_link_libraries，后续可以考虑拆解此处。
+
+  > ```bash
+  > CMake Error at CMakeLists.txt:294 (target_link_libraries):
+  > The keyword signature for target_link_libraries has already been used with
+  > the target "serial-studio".  All uses of target_link_libraries with a
+  > target must be either all-keyword or all-plain.
+  > The uses of the keyword signature are here:
+  > 
+  >    * /home/nichijou/Qt/6.3.2/gcc_64/lib/cmake/Qt6Core/Qt6CoreMacros.cmake:538 (target_link_libraries)
+  >    * /home/nichijou/Qt/6.3.2/gcc_64/lib/cmake/Qt6Qml/Qt6QmlMacros.cmake:368 (target_link_libraries)
+  >    * /home/nichijou/Qt/6.3.2/gcc_64/lib/cmake/Qt6Qml/Qt6QmlMacros.cmake:908 (target_link_libraries)
+  > ```
+
+* 编译后source install/setup.zsh报错，无法找到文件。原因为未正确编译或者Install不对
+
+  > ```bash
+  > install(TARGETS serial-studio
+  >      DESTINATION lib/${PROJECT_NAME})
+  > ```
+
+* PROJECT_NAME需要与可执行文件相同。否则会报错
+
+  > ```bash
+  > ament_package_xml() package name 'serial-studio' in '/package.xml' does not
+  > match current PROJECT_NAME 'serial-stu'.  You must call project() with
+  > the same package name before.
+  > ```
+
+* 使用ros2 run 执行文件时，报错找不到一些库，还是因为在安装ROS的时候默认安装了QT5需要在环境变量中指定QT6的安装路径。
+
+  > ```bash
+  > export LD_LIBRARY_PATH=/home/nichijou/Qt/6.3.2/gcc_64/lib:$LD_LIBRARY_PATH
+  > ```
+
+成功执行
+
+![image-20230506001627988](image/image-20230506001627988.png)
+
+#### qml文件分析
+
+Cpp_XX_XX为src/Misc/ModuleManager.cpp下注册的QML Modules
+
+> * main.qml id:app
+>   * Windows.MainWindow.qml
+>     * ../Panes
+>       * Toolbar.qml --
+>         * Setup.qml --remove mqtt and setting
+>           * Device Mqtt Setting 
+>           * add ROS and remove Mqtt Sttting
+>         * Dashboard.qml
+>         * Console.qml
+>         * New Ros2.qml
+>     * ../Window
+>     * ../Widgets
+>     * ../ProjectEditor
+>     * ../FramelessWindow
+>     * ../PlatformDependent
+>       * Menubar.qml -- add ROS2 and remove some useless
+>     * 
+>   * Windows.about.qml
+>   * Windows.CsvPlayer.qml
+>   * Windows.ProjectEditor.qml
+>   *  ~~Windows.Donate.qml~~
+>   * ~~Windows.Acknowledgements.qml~~
 
