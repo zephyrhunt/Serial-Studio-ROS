@@ -53,14 +53,13 @@ void IO::Drivers::Ros::close()
 
 bool IO::Drivers::Ros::isOpen() const
 {
-
     return m_nodeConnected;
 }
 
 bool IO::Drivers::Ros::isReadable() const
 {
-
-    return false;
+    // enable
+    return isOpen();
 }
 
 bool IO::Drivers::Ros::isWritable() const
@@ -70,7 +69,6 @@ bool IO::Drivers::Ros::isWritable() const
 
 bool IO::Drivers::Ros::configurationOk() const
 {
-
    return true;
 }
 
@@ -89,7 +87,6 @@ quint64 IO::Drivers::Ros::write(const QByteArray &data)
 bool IO::Drivers::Ros::open(const QIODevice::OpenMode mode)
 {
     m_nodeConnected = true;
-
     return true;
 }
 
@@ -192,6 +189,7 @@ void IO::Drivers::Ros::subCallBack(const std_msgs::msg::String &string)
 {
     m_reveiveData = QString::fromStdString(string.data);
     RCLCPP_INFO(this->m_node->get_logger(), "receive:%s", m_reveiveData.toStdString().c_str());
+    Q_EMIT dataReceived(m_reveiveData.toUtf8());
 }
 
 QString IO::Drivers::Ros::receiveData() const
@@ -219,4 +217,10 @@ void IO::Drivers::Ros::setSubEnable(bool is_enable)
 void IO::Drivers::Ros::setPubEnable(bool is_enable)
 {
     m_pubEnable = is_enable;
+}
+
+void IO::Drivers::Ros::onReadyRead()
+{
+    if (isOpen())
+        Q_EMIT dataReceived(m_reveiveData.toUtf8());
 }

@@ -85,24 +85,4 @@ Item {
             Component.onCompleted: app.projectEditorWindow = this
         }
     }
-
-    // //
-    // // Donations dialog
-    // //
-    // Loader {
-    //     asynchronous: false
-    //     sourceComponent: Windows.Donate {
-    //         Component.onCompleted: app.donateDialog = this
-    //     }
-    // }
-
-    // //
-    // // Acknowledgements dialog
-    // //
-    // Loader {
-    //     asynchronous: true
-    //     sourceComponent: Windows.Acknowledgements {
-    //         Component.onCompleted: app.acknowledgementsDialog = this
-    //     }
-    // }
 }
