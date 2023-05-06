@@ -227,7 +227,7 @@ Item {
                 id: hexCheckbox
                 opacity: enabled ? 1 : 0.5
                 enabled: Cpp_IO_Manager.readWrite
-                checked: Cpp_IO_Console.dataMode === 1
+                // checked: Cpp_IO_Console.dataMode === 1
                 onCheckedChanged: Cpp_IO_Console.dataMode = checked ? 1 : 0
             }
 

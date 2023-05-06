@@ -45,11 +45,23 @@ class Ros : public HAL_Driver
                    READ serviceIndex
                    WRITE setServiceIndex
                    NOTIFY serviceIndexChanged)
+
+    Q_PROPERTY(bool pubEnable
+                   READ pubEnable
+                   WRITE setPubEnable
+                   NOTIFY pubEnableChanged)
+
+    Q_PROPERTY(bool subEnable
+                   READ subEnable
+                   WRITE setSubEnable
+                   NOTIFY subEnableChanged)
 Q_SIGNALS:
     void availableTopicChanged();
     void availableServiceChanged();
     void topicIndexChanged();
     void serviceIndexChanged();
+    void pubEnableChanged();
+    void subEnableChanged();
 
 private:
     explicit Ros();
@@ -71,14 +83,18 @@ public:
 
     QString topic() const;
     quint8     topicIndex() const;
-    StringList topicList() const;
     quint8     serviceIndex() const;
+    StringList topicList() const;
     StringList serviceList() const;
+    bool        subEnable() const;
+    bool        pubEnable() const;
 
     QString receiveData()const;
 
     void setTopicIndex(quint8 index);
     void setServiceIndex(quint8 index);
+    void setSubEnable(bool is_enable);
+    void setPubEnable(bool is_enable);
 private Q_SLOTS:
     void refreshRosInfo();
 private:
@@ -91,6 +107,8 @@ private:
     quint8      m_serviceIndex;
     StringList  m_topicList;
     StringList  m_serviceList;
+    bool        m_subEnable;
+    bool        m_pubEnable;
     bool        m_nodeConnected;
 
     std_msgs::msg::Int32 m_pub_data;

@@ -573,14 +573,21 @@ void IO::Console::addToHistory(const QString &command)
  */
 QByteArray IO::Console::hexToBytes(const QString &data)
 {
-    QString withoutSpaces = data;
+    QString withoutSpaces = data; // 1 or 2
     withoutSpaces.replace(" ", "");
 
     QByteArray array;
+
+    int8_t is_single = 0;
+    is_single = withoutSpaces.length() % 2;
+
+    if (is_single)
+        withoutSpaces.append('0');
+
     for (int i = 0; i < withoutSpaces.length(); i += 2)
     {
         auto chr1 = withoutSpaces.at(i);
-        auto chr2 = withoutSpaces.at(i + 1);
+        auto chr2 = withoutSpaces.at(i + 1); //find bug
         auto byte = QString("%1%2").arg(chr1, chr2).toInt(Q_NULLPTR, 16);
         array.append(byte);
     }
