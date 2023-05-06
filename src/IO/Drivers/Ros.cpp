@@ -130,10 +130,10 @@ void IO::Drivers::Ros::refreshRosInfo()
             }
         }
 
-        qDebug()<<"current:"<<m_topicIndex<<"size:"<<m_topicList.size()-1;
         Q_EMIT availableTopicChanged();
     }
 
+    qDebug()<<"current:"<<m_topicIndex<<"size:"<<m_topicList.size()-1<<"is enable:"<<pubEnable();
     auto services = m_node->get_service_names_and_types();
     serviceListNow.append(tr("Select service"));
     for(const auto &service_:services){
@@ -201,4 +201,22 @@ QString IO::Drivers::Ros::receiveData() const
 quint8 IO::Drivers::Ros::serviceIndex() const
 {
     return m_serviceIndex;
+}
+
+bool IO::Drivers::Ros::subEnable() const
+{
+    return m_subEnable;
+}
+bool IO::Drivers::Ros::pubEnable() const
+{
+    return m_pubEnable;
+}
+void IO::Drivers::Ros::setSubEnable(bool is_enable)
+{
+    m_subEnable = is_enable;
+}
+
+void IO::Drivers::Ros::setPubEnable(bool is_enable)
+{
+    m_pubEnable = is_enable;
 }

@@ -45,6 +45,7 @@ Control {
 
         target: Cpp_Misc_Translator
     }
+
     // Control layout
     ColumnLayout {
         anchors.fill: parent
@@ -57,6 +58,7 @@ Control {
             columnSpacing: app.spacing
             columns: 2
             rowSpacing: app.spacing
+            Layout.alignment:Qt.AlignTop
 
             // topic port selector
             Label {
@@ -65,7 +67,7 @@ Control {
             ComboBox {
                 id: _topicCombo
                 Layout.fillWidth: true
-                currentIndex: Cpp_IO_RosNode.topicIndex
+                // currentIndex: Cpp_IO_RosNode.topicIndex
                 model: Cpp_IO_RosNode.topicList
                 palette.base: Cpp_ThemeManager.setupPanelBackground
 
@@ -82,7 +84,7 @@ Control {
             ComboBox {
                 id: _serviceCombo
                 Layout.fillWidth: true
-                currentIndex: Cpp_IO_RosNode.serviceIndex
+                // currentIndex: Cpp_IO_RosNode.serviceIndex
                 model: Cpp_IO_RosNode.serviceList
                 palette.base: Cpp_ThemeManager.setupPanelBackground
 
