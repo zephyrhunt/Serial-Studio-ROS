@@ -3,7 +3,6 @@ import QtQuick.Window 2.1
 import QtQuick.Layouts
 import QtQuick.Controls
 import Qt.labs.settings
-
 import "../Panes"
 import "../Windows"
 import "../Widgets"
@@ -11,71 +10,56 @@ import "../ProjectEditor"
 import "../FramelessWindow" as FramelessWindow
 import "../PlatformDependent" as PlatformDependent
 
-
 FramelessWindow.CustomWindow {
     id: root
 
-    //
-    // Quit application when this window is closed
-    //
-    onClosed: Qt.quit()
-
-    //
-    // Customize window border
-    //
-    showIcon: true
-    borderWidth: 2
-    borderColor: Qt.darker(Cpp_ThemeManager.toolbarGradient2, 1.5)
-
-    //
-    // Global properties
-    //
-    readonly property bool setupVisible: setup.visible
+    // Custom properties
+    property int appLaunchCount: 0
+    property bool automaticUpdates: false
     readonly property bool consoleVisible: terminal.visible
     readonly property bool dashboardVisible: dashboard.visible
-
-    //
-    // Custom properties
-    //
-    property int appLaunchCount: 0
     property bool firstValidFrame: false
-    property bool automaticUpdates: false
+    property bool ros2wsVisible: true
+    // Global properties
+    readonly property bool setupVisible: setup.visible
     property alias vt100emulation: terminal.vt100emulation
 
-    //
+    function consoleClear() {
+        terminal.clear();
+    }
+    // Console-related functions
+    function consoleCopy() {
+        terminal.copy();
+    }
+    function consoleSelectAll() {
+        terminal.selectAll();
+    }
+    function showConsole() {
+        toolbar.consoleClicked();
+    }
+    function showDashboard() {
+        dbTimer.start();
+    }
+    function showRos2Ws() {
+        toolbar.ros2WsClicked();
+    }
     // Toolbar functions aliases
-    //
-    function showSetup()     { toolbar.setupClicked()     }
-    function showConsole()   { toolbar.consoleClicked()   }
-    function showDashboard() { dbTimer.start() }
-
-    //
-    // Wait a little before showing the dashboard to avoid UI glitches and/or overloading
-    // the rendering engine
-    //
-    Timer {
-        id: dbTimer
-        interval: 500
-        onTriggered: toolbar.dashboardClicked()
+    function showSetup() {
+        toolbar.setupClicked();
     }
 
-    //
-    // Console-related functions
-    //
-    function consoleCopy()      { terminal.copy()      }
-    function consoleClear()     { terminal.clear()     }
-    function consoleSelectAll() { terminal.selectAll() }
-
-    //
-    // Window geometry
-    //
-    visible: false
-    title: Cpp_AppName
-    width: minimumWidth
-    height: minimumHeight
-    minimumWidth: 1090 + 2 * root.shadowMargin
     backgroundColor: Cpp_ThemeManager.windowBackground
+    borderColor: Qt.darker(Cpp_ThemeManager.toolbarGradient2, 1.5)
+    borderWidth: 2
+    height: minimumHeight
     minimumHeight: 650 + 2 * root.shadowMargin + root.titlebar.height
+    minimumWidth: 1090 + 2 * root.shadowMargin
+    // Customize window border
+    showIcon: true
+    title: Cpp_AppName
+    // Window geometry
+    visible: false
+    width: minimumWidth
 
     // ------------------------------
     // Startup code
@@ -85,254 +69,240 @@ FramelessWindow.CustomWindow {
         // terminal.showWelcomeGuide()
 
         // Increment app launch count
-        ++appLaunchCount
+        ++appLaunchCount;
 
         // Show app window
         if (root.isFullscreen)
-            root.showFullScreen()
+            root.showFullScreen();
         else if (root.isMaximized)
-            root.showMaximized()
+            root.showMaximized();
         else {
             // Fix maximize not working on first try on macOS & Windows
-            root.opacity = 0
-            var x = root.x
-            var y = root.y
-            var w = root.width
-            var h = root.height
-            root.showMaximized()
-            root.showNormal()
-            root.setGeometry(x, y, w,h)
-            root.opacity = 1
+            root.opacity = 0;
+            var x = root.x;
+            var y = root.y;
+            var w = root.width;
+            var h = root.height;
+            root.showMaximized();
+            root.showNormal();
+            root.setGeometry(x, y, w, h);
+            root.opacity = 1;
         }
 
         // Force active focus
-        root.requestActivate()
-        root.requestUpdate()
+        root.requestActivate();
+        root.requestUpdate();
 
         // remove donation and update
     }
+    // Quit application when this window is closed
+    onClosed: Qt.quit()
 
-    //
+    // Wait a little before showing the dashboard to avoid UI glitches and/or overloading
+    // the rendering engine
+    Timer {
+        id: dbTimer
+        interval: 500
+
+        onTriggered: toolbar.dashboardClicked()
+    }
     // Hide console & device manager when we receive first valid frame
-    //
     Connections {
-        target: Cpp_UI_Dashboard
-
-        function onUpdated()  {
+        function onUpdated() {
             if (root.firstValidFrame)
-                return
-
+                return;
             if ((Cpp_IO_Manager.connected || Cpp_CSV_Player.isOpen) && Cpp_UI_Dashboard.frameValid()) {
-                setup.hide()
-                root.showDashboard()
-                root.firstValidFrame = true
-            }
-
-            else {
-                setup.show()
-                root.showConsole()
-                root.firstValidFrame = false
+                setup.hide();
+                root.showDashboard();
+                root.firstValidFrame = true;
+            } else {
+                setup.show();
+                root.showConsole();
+                root.firstValidFrame = false;
             }
         }
-    }
 
-    //
-    // Show console tab on serial disconnect
-    //
-    Connections {
         target: Cpp_UI_Dashboard
-        function onDataReset() {
-            setup.show()
-            root.showConsole()
-            root.firstValidFrame = false
-        }
     }
+    // Show console tab on serial disconnect
+    Connections {
+        function onDataReset() {
+            setup.show();
+            root.showConsole();
+            root.firstValidFrame = false;
+        }
 
-    //
+        target: Cpp_UI_Dashboard
+    }
     // Save window size & position
-    //
     Settings {
-        property alias wx: root.x
-        property alias wy: root.y
-        property alias ww: root.width
-        property alias wh: root.height
-        property alias wm: root.isMaximized
-        property alias wf: root.isFullscreen
         property alias appStatus: root.appLaunchCount
         property alias autoUpdater: root.automaticUpdates
+        property alias wf: root.isFullscreen
+        property alias wh: root.height
+        property alias wm: root.isMaximized
+        property alias ww: root.width
+        property alias wx: root.x
+        property alias wy: root.y
     }
-
-    //
     // macOS menubar loader
-    //
     Loader {
         active: Cpp_IsMac
         asynchronous: false
-        sourceComponent: PlatformDependent.MenubarMacOS {}
-    }
 
-    //
+        sourceComponent: PlatformDependent.MenubarMacOS {
+        }
+    }
     // Rectangle for the menubar (only used if custom window flags are disabled)
-    //
     Rectangle {
-        color: root.titlebarColor
         anchors.fill: menubarLayout
+        color: root.titlebarColor
         visible: !Cpp_ThemeManager.customWindowDecorations
     }
-
-    //
     // Menubar, shown by default on Windows & Linux and when the app is fullscreen
-    //
     RowLayout {
         id: menubarLayout
-        z: titlebar.z + 1
-        spacing: app.spacing
-        height: !showMenubar ? titlebar.height : 38
 
         readonly property bool showMenubar: !root.showMacControls || isFullscreen
 
+        height: !showMenubar ? titlebar.height : 38
+        spacing: app.spacing
+        z: titlebar.z + 1
+
         anchors {
-            top: parent.top
             left: parent.left
-            right: parent.right
             leftMargin: root.leftTitlebarMargin + root.shadowMargin
+            right: parent.right
             rightMargin: root.rightTitlebarMargin + root.shadowMargin
+            top: parent.top
             topMargin: root.shadowMargin + (!root.showMacControls ? 1 : 0)
         }
-
-        //
         // Menubar
-        //
         Loader {
-            opacity: 0.8
-            asynchronous: false
             Layout.alignment: Qt.AlignVCenter
+            asynchronous: false
+            opacity: 0.8
+
             sourceComponent: PlatformDependent.Menubar {
                 enabled: !root.showMacControls || isFullscreen
                 visible: !root.showMacControls || isFullscreen
             }
         }
-
-        //
         // Spacer
-        //
         Item {
             Layout.fillWidth: true
         }
     }
-
-    //
     // Main layout
-    //
     Page {
-        clip: true
         anchors.fill: parent
         anchors.margins: root.shadowMargin
-        palette.text: Cpp_ThemeManager.text
-        palette.buttonText: Cpp_ThemeManager.text
-        palette.windowText: Cpp_ThemeManager.text
         anchors.topMargin: menubarLayout.height + root.shadowMargin
+        clip: true
+        palette.buttonText: Cpp_ThemeManager.text
+        palette.text: Cpp_ThemeManager.text
+        palette.windowText: Cpp_ThemeManager.text
 
         background: Rectangle {
-            radius: root.radius
             color: Cpp_ThemeManager.windowBackground
+            radius: root.radius
         }
 
         ColumnLayout {
-            spacing: 3
             anchors.fill: parent
+            spacing: 3
 
-            //
             // Application toolbar
-            //
             Toolbar {
                 id: toolbar
+                Layout.fillWidth: true
+                Layout.maximumHeight: 48
+                Layout.minimumHeight: 48
+                consoleChecked: root.consoleVisible
+                dashboardChecked: root.dashboardVisible  // control button if visible
+                ros2WsChecked: root.ros2WsVisible
+                setupChecked: root.setupVisible
                 window: root
                 z: titlebar.z
-                Layout.fillWidth: true
-                Layout.minimumHeight: 48
-                Layout.maximumHeight: 48
-                setupChecked: root.setupVisible
-                consoleChecked: root.consoleVisible
-                dashboardChecked: root.dashboardVisible
-
-                onProjectEditorClicked: app.projectEditorWindow.show()
-                onSetupClicked: setup.visible ? setup.hide() : setup.show()
-
-                onDashboardClicked: {
-                    if (Cpp_UI_Dashboard.available) {
-                        consoleChecked = 0
-                        dashboardChecked = 1
-                        if (stack.currentItem != dashboard)
-                            stack.push(dashboard)
-                    }
-                    else
-                        root.showConsole()
-                }
 
                 onConsoleClicked: {
-                    consoleChecked = 1
-                    dashboardChecked = 0
-                    stack.pop()
+                    consoleChecked = 1;
+                    ros2WsChecked = 0;
+                    dashboardChecked = 0;
+                    if (stack.currentItem !== terminal)
+                        stack.replace(terminal, StackView.Push);
                 }
+                onDashboardClicked: {
+                    consoleChecked = 0;
+                    ros2WsChecked = 0;
+                    dashboardChecked = 1;
+                    if (stack.currentItem !== dashboard)
+                        stack.replace(dashboard, StackView.Pop);
+                }
+                onProjectEditorClicked: app.projectEditorWindow.show()
+                onRos2WsClicked: {
+                    consoleChecked = 0;
+                    dashboardChecked = 0;
+                    ros2WsChecked = 1;
+                    if (stack.currentItem !== ros2ws)
+                        stack.replace(ros2ws, StackView.SlideDown);
+                }
+                onSetupClicked: setup.visible ? setup.hide() : setup.show()
             }
 
-            //
             // Console, dashboard & setup panel & ros2 panel
-            //
             RowLayout {
-                spacing: 0
-                Layout.fillWidth: true
                 Layout.fillHeight: true
+                Layout.fillWidth: true
+                spacing: 0
 
                 StackView {
                     id: stack
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
                     clip: true
                     initialItem: terminal
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
+
                     data: [
                         Console {
                             id: terminal
+                            height: parent.height
                             visible: false
                             width: parent.width
-                            height: parent.height
                         },
-
                         Dashboard {
                             id: dashboard
+                            height: parent.height
                             visible: false
                             width: parent.width
+                        },
+                        Ros2Ws {
+                            id: ros2ws
                             height: parent.height
+                            visible: false
+                            width: parent.width
                         }
                     ]
                 }
-
                 Setup {
                     id: setup
                     Layout.fillHeight: true
-                    Layout.rightMargin: setupMargin
-                    Layout.minimumWidth: displayedWidth
                     Layout.maximumWidth: displayedWidth
+                    Layout.minimumWidth: displayedWidth
+                    Layout.rightMargin: setupMargin
                 }
             }
         }
     }
-
-    //
     // JSON project drop area
-    //
     JSONDropArea {
         anchors.fill: parent
         enabled: !Cpp_IO_Manager.connected
     }
-
-    //
     // Resize handler
-    //
     FramelessWindow.ResizeHandles {
-        window: root
         anchors.fill: parent
         handleSize: root.handleSize
+        window: root
     }
 }

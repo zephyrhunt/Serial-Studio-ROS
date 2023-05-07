@@ -96,9 +96,6 @@ public:
     void setSubEnable(bool is_enable);
     void setPubEnable(bool is_enable);
 private Q_SLOTS:
-    void onReadyRead();
-//    void readSettings();
-//    void writeSettings();
     void refreshRosInfo();
 private:
     void  subCallBack(const std_msgs::msg::String &string);

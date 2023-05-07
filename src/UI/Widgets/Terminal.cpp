@@ -120,6 +120,16 @@ bool Widgets::Terminal::autoscroll() const
 }
 
 /**
+ * Returns @c true if the widget shall wrap automatically to the bottom when new
+ * text is appended to the widget in 1ms.
+ */
+bool Widgets::Terminal::autoWrap() const
+{
+    return m_autoWrap;
+}
+
+
+/**
  * Returns the palette used by the QPlainTextEdit widget
  */
 QPalette Widgets::Terminal::palette() const
@@ -381,6 +391,12 @@ void Widgets::Terminal::setAutoscroll(const bool enabled)
     Q_EMIT autoscrollChanged();
 }
 
+void Widgets::Terminal::setAutoWrap(const bool enabled)
+{
+    m_autoWrap = enabled;
+    IO::Console::instance().setAutoWrap(enabled);
+    Q_EMIT autoWrapChanged();
+}
 /**
  * Inserts the given @a text directly, no additional line breaks added.
  */
