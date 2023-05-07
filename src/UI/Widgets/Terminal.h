@@ -76,6 +76,10 @@ class Terminal : public UI::DeclarativeWidget
                READ autoscroll
                WRITE setAutoscroll
                NOTIFY autoscrollChanged)
+    Q_PROPERTY(bool autoWrap
+               READ autoWrap
+               WRITE setAutoWrap
+               NOTIFY autoWrapChanged)
     Q_PROPERTY(QString placeholderText
                READ placeholderText
                WRITE setPlaceholderText
@@ -129,6 +133,7 @@ Q_SIGNALS:
     void fontChanged();
     void readOnlyChanged();
     void autoscrollChanged();
+    void autoWrapChanged();
     void colorPaletteChanged();
     void wordWrapModeChanged();
     void copyAvailableChanged();
@@ -149,6 +154,7 @@ public:
     bool empty() const;
     bool readOnly() const;
     bool autoscroll() const;
+    bool autoWrap() const;
     QPalette palette() const;
     int wordWrapMode() const;
     int scrollbarWidth() const;
@@ -173,6 +179,7 @@ public Q_SLOTS:
     void insertText(const QString &text);
     void setWordWrapMode(const int mode);
     void setAutoscroll(const bool enabled);
+    void setAutoWrap(const bool enabled);
     void setScrollbarWidth(const int width);
     void setPalette(const QPalette &palette);
     void setWidgetEnabled(const bool enabled);
@@ -196,6 +203,7 @@ private:
 private:
     bool m_repaint;
     bool m_autoscroll;
+    bool m_autoWrap;
     bool m_textChanged;
     bool m_emulateVt100;
     bool m_copyAvailable;

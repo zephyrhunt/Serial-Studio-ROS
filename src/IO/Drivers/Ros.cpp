@@ -218,9 +218,3 @@ void IO::Drivers::Ros::setPubEnable(bool is_enable)
 {
     m_pubEnable = is_enable;
 }
-
-void IO::Drivers::Ros::onReadyRead()
-{
-    if (isOpen())
-        Q_EMIT dataReceived(m_reveiveData.toUtf8());
-}

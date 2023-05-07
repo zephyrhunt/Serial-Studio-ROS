@@ -229,6 +229,13 @@ StringList IO::Console::displayModes() const
     list.append(tr("Hexadecimal"));
     return list;
 }
+StringList IO::Console::inTimeList() const
+{
+    StringList list = {"0", "1", "2", "5", "10", "100", "1000"};
+    list.append("1");
+
+    return list;
+}
 
 /**
  * Validates the given @a text and adds space to display the text in a byte-oriented view
@@ -482,6 +489,8 @@ void IO::Console::append(const QString &string, const bool addTimestamp)
     data = data.replace("\r\n", "\n");
     data = data.replace("\r", "\n");
 
+    if (autoWrap() && data.at(data.length()-1) != '\n')
+        data.append('\n');
     // Get timestamp
     QString timestamp;
     if (addTimestamp)
@@ -651,6 +660,28 @@ QString IO::Console::hexadecimalStr(const QByteArray &data)
 
     // Return string
     return str;
+}
+bool IO::Console::autoWrap() const
+{
+    return m_autoWrap;
+}
+void IO::Console::setAutoWrap(const bool enabled)
+{
+
+    if (autoWrap() != enabled)
+    {
+        m_autoWrap = enabled;
+        Q_EMIT autoWrapChanged();
+    }
+}
+qint32 IO::Console::inTime() const
+{
+    return m_inTime;
+}
+void IO::Console::setInTime(qint32 time)
+{
+    m_inTime = time;
+    Q_EMIT inTimeChanged();
 }
 
 #ifdef SERIAL_STUDIO_INCLUDE_MOC

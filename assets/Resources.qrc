@@ -124,6 +124,7 @@
         <file>qml/Panes/Dashboard.qml</file>
         <file>qml/Panes/Setup.qml</file>
         <file>qml/Panes/Toolbar.qml</file>
+        <file>qml/Panes/Ros2Ws.qml</file>
         <file>qml/PlatformDependent/DecentMenuItem.qml</file>
         <file>qml/PlatformDependent/Menubar.qml</file>
         <file>qml/PlatformDependent/MenubarMacOS.qml</file>

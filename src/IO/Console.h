@@ -49,6 +49,10 @@ class Console : public QObject
                READ autoscroll
                WRITE setAutoscroll
                NOTIFY autoscrollChanged)
+    Q_PROPERTY(bool autoWrap
+                   READ autoWrap
+                   WRITE setAutoWrap
+                   NOTIFY autoWrapChanged)
     Q_PROPERTY(bool showTimestamp
                READ showTimestamp
                WRITE setShowTimestamp
@@ -68,9 +72,15 @@ class Console : public QObject
                READ displayMode
                WRITE setDisplayMode
                NOTIFY displayModeChanged)
+
     Q_PROPERTY(QString currentHistoryString
                READ currentHistoryString
                NOTIFY historyItemChanged)
+
+    Q_PROPERTY(qint32 inTime
+               READ inTime
+               WRITE setInTime
+               NOTIFY inTimeChanged)
     // clang-format on
 
 Q_SIGNALS:
@@ -78,12 +88,14 @@ Q_SIGNALS:
     void dataReceived();
     void dataModeChanged();
     void autoscrollChanged();
+    void autoWrapChanged();
     void lineEndingChanged();
     void displayModeChanged();
     void historyItemChanged();
     void textDocumentChanged();
     void showTimestampChanged();
     void stringReceived(const QString &text);
+    void inTimeChanged();
 
 private:
     explicit Console();
@@ -120,8 +132,11 @@ public:
 
     bool echo() const;
     bool autoscroll() const;
+    bool autoWrap() const;
     bool saveAvailable() const;
     bool showTimestamp() const;
+    qint32 inTime() const;
+    void setInTime(qint32 time);
 
     DataMode dataMode() const;
     LineEnding lineEnding() const;
@@ -131,6 +146,7 @@ public:
     Q_INVOKABLE StringList dataModes() const;
     Q_INVOKABLE StringList lineEndings() const;
     Q_INVOKABLE StringList displayModes() const;
+    Q_INVOKABLE StringList inTimeList() const;
     Q_INVOKABLE QString formatUserHex(const QString &text);
 
 public Q_SLOTS:
@@ -142,6 +158,7 @@ public Q_SLOTS:
     void setEcho(const bool enabled);
     void print(const QString &fontFamily);
     void setAutoscroll(const bool enabled);
+    void setAutoWrap(const bool enabled);
     void setShowTimestamp(const bool enabled);
     void setDataMode(const IO::Console::DataMode &mode);
     void setLineEnding(const IO::Console::LineEnding &mode);
@@ -165,9 +182,11 @@ private:
     DisplayMode m_displayMode;
 
     int m_historyItem;
+    qint32 m_inTime;
 
     bool m_echo;
     bool m_autoscroll;
+    bool m_autoWrap;
     bool m_showTimestamp;
     bool m_isStartingLine;
 

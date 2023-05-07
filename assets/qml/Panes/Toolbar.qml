@@ -32,6 +32,7 @@ Control {
     readonly property string _btSpacer: "  "
     property alias consoleChecked: consoleBt.checked
     property alias dashboardChecked: dashboardBt.checked
+    property alias ros2WsChecked: ros2Bt.checked
     // Aliases to button check status
     property alias setupChecked: setupBt.checked
     // Reference to parent window to be able to drag it with the toolbar
@@ -143,7 +144,7 @@ Control {
         Button {
             id: consoleBt
             Layout.fillHeight: true
-            enabled: dashboardBt.enabled
+            // enabled: dashboardBt.enabled
             flat: true
             icon.color: Cpp_ThemeManager.menubarText
             icon.height: 24
@@ -206,13 +207,13 @@ Control {
             }
 
             // onCheckedChanged: Cpp_Misc_MacExtras.setSetupChecked(checked)
-            onClicked: root.ros2Clicked()
+            onClicked: root.ros2WsClicked()
         }
 
         Button {
             id: dashboardBt
             Layout.fillHeight: true
-            enabled: Cpp_UI_Dashboard.available
+            // enabled: Cpp_UI_Dashboard.available
             flat: true
             icon.color: Cpp_ThemeManager.menubarText
             icon.height: 24
