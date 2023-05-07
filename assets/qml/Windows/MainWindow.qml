@@ -11,6 +11,10 @@ import "../FramelessWindow" as FramelessWindow
 import "../PlatformDependent" as PlatformDependent
 
 FramelessWindow.CustomWindow {
+    // Load welcome text
+    // terminal.showWelcomeGuide()
+    // remove donation and update
+
     id: root
 
     // Custom properties
@@ -22,27 +26,34 @@ FramelessWindow.CustomWindow {
     property bool ros2wsVisible: true
     // Global properties
     readonly property bool setupVisible: setup.visible
+    readonly property bool debugVisible: debug.visible
     property alias vt100emulation: terminal.vt100emulation
 
     function consoleClear() {
         terminal.clear();
     }
+
     // Console-related functions
     function consoleCopy() {
         terminal.copy();
     }
+
     function consoleSelectAll() {
         terminal.selectAll();
     }
+
     function showConsole() {
         toolbar.consoleClicked();
     }
+
     function showDashboard() {
         dbTimer.start();
     }
+
     function showRos2Ws() {
         toolbar.ros2WsClicked();
     }
+
     // Toolbar functions aliases
     function showSetup() {
         toolbar.setupClicked();
@@ -60,23 +71,18 @@ FramelessWindow.CustomWindow {
     // Window geometry
     visible: false
     width: minimumWidth
-
     // ------------------------------
     // Startup code
     // ------------------------------
     Component.onCompleted: {
-        // Load welcome text
-        // terminal.showWelcomeGuide()
-
         // Increment app launch count
         ++appLaunchCount;
-
         // Show app window
-        if (root.isFullscreen)
+        if (root.isFullscreen) {
             root.showFullScreen();
-        else if (root.isMaximized)
+        } else if (root.isMaximized) {
             root.showMaximized();
-        else {
+        } else {
             // Fix maximize not working on first try on macOS & Windows
             root.opacity = 0;
             var x = root.x;
@@ -88,12 +94,9 @@ FramelessWindow.CustomWindow {
             root.setGeometry(x, y, w, h);
             root.opacity = 1;
         }
-
         // Force active focus
         root.requestActivate();
         root.requestUpdate();
-
-        // remove donation and update
     }
     // Quit application when this window is closed
     onClosed: Qt.quit()
@@ -102,15 +105,17 @@ FramelessWindow.CustomWindow {
     // the rendering engine
     Timer {
         id: dbTimer
-        interval: 500
 
+        interval: 500
         onTriggered: toolbar.dashboardClicked()
     }
+
     // Hide console & device manager when we receive first valid frame
     Connections {
         function onUpdated() {
             if (root.firstValidFrame)
-                return;
+                return ;
+
             if ((Cpp_IO_Manager.connected || Cpp_CSV_Player.isOpen) && Cpp_UI_Dashboard.frameValid()) {
                 setup.hide();
                 root.showDashboard();
@@ -124,6 +129,7 @@ FramelessWindow.CustomWindow {
 
         target: Cpp_UI_Dashboard
     }
+
     // Show console tab on serial disconnect
     Connections {
         function onDataReset() {
@@ -134,6 +140,7 @@ FramelessWindow.CustomWindow {
 
         target: Cpp_UI_Dashboard
     }
+
     // Save window size & position
     Settings {
         property alias appStatus: root.appLaunchCount
@@ -145,6 +152,7 @@ FramelessWindow.CustomWindow {
         property alias wx: root.x
         property alias wy: root.y
     }
+
     // macOS menubar loader
     Loader {
         active: Cpp_IsMac
@@ -152,13 +160,16 @@ FramelessWindow.CustomWindow {
 
         sourceComponent: PlatformDependent.MenubarMacOS {
         }
+
     }
+
     // Rectangle for the menubar (only used if custom window flags are disabled)
     Rectangle {
         anchors.fill: menubarLayout
         color: root.titlebarColor
         visible: !Cpp_ThemeManager.customWindowDecorations
     }
+
     // Menubar, shown by default on Windows & Linux and when the app is fullscreen
     RowLayout {
         id: menubarLayout
@@ -178,6 +189,7 @@ FramelessWindow.CustomWindow {
             topMargin: root.shadowMargin + (!root.showMacControls ? 1 : 0)
         }
         // Menubar
+
         Loader {
             Layout.alignment: Qt.AlignVCenter
             asynchronous: false
@@ -187,12 +199,16 @@ FramelessWindow.CustomWindow {
                 enabled: !root.showMacControls || isFullscreen
                 visible: !root.showMacControls || isFullscreen
             }
+
         }
         // Spacer
+
         Item {
             Layout.fillWidth: true
         }
+
     }
+
     // Main layout
     Page {
         anchors.fill: parent
@@ -203,11 +219,6 @@ FramelessWindow.CustomWindow {
         palette.text: Cpp_ThemeManager.text
         palette.windowText: Cpp_ThemeManager.text
 
-        background: Rectangle {
-            color: Cpp_ThemeManager.windowBackground
-            radius: root.radius
-        }
-
         ColumnLayout {
             anchors.fill: parent
             spacing: 3
@@ -215,22 +226,23 @@ FramelessWindow.CustomWindow {
             // Application toolbar
             Toolbar {
                 id: toolbar
+
                 Layout.fillWidth: true
                 Layout.maximumHeight: 48
                 Layout.minimumHeight: 48
                 consoleChecked: root.consoleVisible
-                dashboardChecked: root.dashboardVisible  // control button if visible
+                dashboardChecked: root.dashboardVisible // control button if visible
                 ros2WsChecked: root.ros2WsVisible
                 setupChecked: root.setupVisible
                 window: root
                 z: titlebar.z
-
                 onConsoleClicked: {
                     consoleChecked = 1;
                     ros2WsChecked = 0;
                     dashboardChecked = 0;
                     if (stack.currentItem !== terminal)
                         stack.replace(terminal, StackView.Push);
+
                 }
                 onDashboardClicked: {
                     consoleChecked = 0;
@@ -238,6 +250,7 @@ FramelessWindow.CustomWindow {
                     dashboardChecked = 1;
                     if (stack.currentItem !== dashboard)
                         stack.replace(dashboard, StackView.Pop);
+
                 }
                 onProjectEditorClicked: app.projectEditorWindow.show()
                 onRos2WsClicked: {
@@ -246,8 +259,33 @@ FramelessWindow.CustomWindow {
                     ros2WsChecked = 1;
                     if (stack.currentItem !== ros2ws)
                         stack.replace(ros2ws, StackView.SlideDown);
+
                 }
-                onSetupClicked: setup.visible ? setup.hide() : setup.show()
+                // onSetupClicked: stack2.visible ? stack2.hide() : stack2.show()
+                onSetupClicked: {
+                    setupChecked = 1
+                    debugChecked = 0
+                    if (stack2.currentItem !== setup){
+                        if (stack2.visible === false)
+                            stack2.visible = true
+                        stack2.replace(setup)
+                    }
+                    else{
+                        stack2.visible = !stack2.visible
+                    }
+                }
+                onDebugClicked: {
+                    setupChecked = 0;
+                    debugChecked = 1;
+                    if (stack2.currentItem !== debug){
+                        if (stack2.visible === false)
+                            stack2.visible = true
+                        stack2.replace(debug)
+                    }
+                    else{
+                        stack2.visible = !stack2.visible
+                    }
+                }
             }
 
             // Console, dashboard & setup panel & ros2 panel
@@ -258,51 +296,80 @@ FramelessWindow.CustomWindow {
 
                 StackView {
                     id: stack
+
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     clip: true
                     initialItem: terminal
-
                     data: [
                         Console {
                             id: terminal
+
                             height: parent.height
                             visible: false
                             width: parent.width
                         },
                         Dashboard {
                             id: dashboard
+
                             height: parent.height
                             visible: false
                             width: parent.width
                         },
                         Ros2Ws {
                             id: ros2ws
+
                             height: parent.height
                             visible: false
                             width: parent.width
                         }
                     ]
                 }
-                Setup {
-                    id: setup
+
+                StackView {
+                    id: stack2
+
                     Layout.fillHeight: true
-                    Layout.maximumWidth: displayedWidth
-                    Layout.minimumWidth: displayedWidth
-                    Layout.rightMargin: setupMargin
+                    // Layout.fillWidth: true
+                    width: 360
+                    clip: true
+                    initialItem: setup
+                    data: [
+                        Setup {
+                            id: setup
+                            Layout.maximumWidth: displayedWidth
+                            Layout.minimumWidth: displayedWidth
+                            Layout.rightMargin: setupMargin
+                        },
+                        Debug {
+                            id: debug
+                            Layout.fillHeight: true
+                        }
+                    ]
                 }
+
             }
+
         }
+
+        background: Rectangle {
+            color: Cpp_ThemeManager.windowBackground
+            radius: root.radius
+        }
+
     }
+
     // JSON project drop area
     JSONDropArea {
         anchors.fill: parent
         enabled: !Cpp_IO_Manager.connected
     }
+
     // Resize handler
     FramelessWindow.ResizeHandles {
         anchors.fill: parent
         handleSize: root.handleSize
         window: root
     }
+
 }
