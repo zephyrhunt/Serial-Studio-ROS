@@ -197,6 +197,7 @@ private Q_SLOTS:
     void addText(const QString &text, const bool enableVt100);
 
 private:
+    QTextCharFormat praseColor(const QString &text);
     QString vt100Processing(const QString &data);
     void requestRepaint(const bool textChanged = false);
 

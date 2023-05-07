@@ -4,14 +4,14 @@ project(serial-studio VERSION 6.3 LANGUAGES C CXX)
 set(CMAKE_PREFIX_PATH "/home/nichijou/Qt/6.3.2/gcc_64")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOUIC ON)
-
+#set(OPENSSL_PREFIX "/usr/include/openssl")
 #set(QT_VERSION_MAJOR 6)
 #set(CMAKE_PREFIX_PATH )
 set(OPENSSL_ROOT_DIR /usr/bin/openssl)
 #set(OPENSSL_INCLUDE_DIR "/usr/bin/openssl/include")
 #set(OPENSSL_LIBRARIES "/usr/bin/openssl/lib/libssl.so;/usr/bin/openssl/lib/libcrypto.so")
 find_package(OpenSSL REQUIRED)
-find_package(QT NAMES Qt5 Qt6 REQUIRED COMPONENTS Core)
+find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Bluetooth Gui Network PrintSupport Qml Quick QuickControls2 SerialPort Svg Widgets Xml)
 find_package(Qt${QT_VERSION_MAJOR} OPTIONAL_COMPONENTS Concurrent Core5Compat OpenGL OpenGLWidgets)
 
@@ -21,6 +21,12 @@ find_package(rclcpp REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 #ROS Messages
 find_package(std_msgs REQUIRED)
+#Rviz
+find_package(rviz_common REQUIRED)
+find_package(rviz_default_plugins REQUIRED)
+find_package(rviz_ogre_vendor REQUIRED)
+find_package(rviz_rendering REQUIRED)
+
 #find_package(sensor_msgs REQUIRED)
 
 set(ROS_SOURCE src/ROS/QNode.cpp src/ROS/QNode.h src/IO/Drivers/Ros.cpp src/IO/Drivers/Ros.h)
@@ -188,6 +194,7 @@ qt_add_executable(serial-studio WIN32 MACOSX_BUNDLE
     src/UI/Dashboard.cpp src/UI/Dashboard.h
     src/UI/DashboardWidget.cpp src/UI/DashboardWidget.h
     src/UI/DeclarativeWidget.cpp src/UI/DeclarativeWidget.h
+        src/UI/RvizWidget.cpp src/UI/RvizWidget.h
     src/UI/Widgets/Accelerometer.cpp src/UI/Widgets/Accelerometer.h
     src/UI/Widgets/Bar.cpp src/UI/Widgets/Bar.h
     src/UI/Widgets/Common/AnalogGauge.cpp src/UI/Widgets/Common/AnalogGauge.h
@@ -277,6 +284,8 @@ target_include_directories(serial-studio PRIVATE
     libs/qwt/src
     src
     src/ROS
+#        ${rclcpp_INCLUDE_DIRS}
+        ${rviz_common_INCLUDE_DIRS}
 )
 
 target_compile_definitions(serial-studio PRIVATE
@@ -305,11 +314,19 @@ target_link_libraries(serial-studio
     Qt::Svg
     Qt::Widgets
     Qt::Xml
+#        rviz_common::rviz_common
+#        rviz_rendering::rviz_rendering
+#        rviz_ogre_vendor::OgreMain
+#        rviz_ogre_vendor::OgreOverlay
 )
 
 ament_target_dependencies(serial-studio
         rclcpp
         std_msgs
+#        rviz_common
+#        rviz_default_plugins
+#        rviz_ogre_vendor
+#        rviz_rendering
 )
 
 # Resources:

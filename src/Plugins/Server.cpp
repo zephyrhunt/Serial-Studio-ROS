@@ -48,19 +48,18 @@ Plugins::Server::Server()
     connect(&IO::Manager::instance(), &IO::Manager::dataReceived,
             this, &Plugins::Server::sendRawData);
 
-    // Configure TCP server
-    connect(&m_server, &QTcpServer::newConnection,
-            this, &Plugins::Server::acceptConnection);
-
-    // clang-format on
-
-    // Begin listening on TCP port
-    if (!m_server.listen(QHostAddress::Any, PLUGINS_TCP_PORT))
-    {
-        Misc::Utilities::showMessageBox(tr("Unable to start plugin TCP server"),
-                                        m_server.errorString());
-        m_server.close();
-    }
+    // close TCP server
+//    // Configure TCP server
+//    connect(&m_server, &QTcpServer::newConnection,
+//            this, &Plugins::Server::acceptConnection);
+//    // clang-format on
+//    // Begin listening on TCP port
+//    if (!m_server.listen(QHostAddress::Any, PLUGINS_TCP_PORT))
+//    {
+//        Misc::Utilities::showMessageBox(tr("Unable to start plugin TCP server"),
+//                                        m_server.errorString());
+//        m_server.close();
+//    }
 }
 
 /**

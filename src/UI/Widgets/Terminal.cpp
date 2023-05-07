@@ -557,6 +557,86 @@ void Widgets::Terminal::setCopyAvailable(const bool yes)
     Q_EMIT copyAvailableChanged();
 }
 
+QTextCharFormat Widgets::Terminal::praseColor(const QString &textToInsert)
+{
+
+//    QString textToInsert = "This is a \033[31xxxred\033[0mblack";
+    QTextCharFormat format;
+    // 匹配转义序列
+    QRegularExpression regex("\\x1b\\[(\\d+)?(;\\d+)*m");
+    QRegularExpressionMatchIterator matchIterator = regex.globalMatch(textToInsert);
+
+    int lastEnd = 0;
+    int colorValue = 0;
+    while (matchIterator.hasNext())
+    {
+        // 处理转义序列前的普通文本
+        QRegularExpressionMatch match = matchIterator.next();
+        int start = match.capturedStart();
+        int end = match.capturedEnd();
+        QString plainText = textToInsert.mid(lastEnd, start - lastEnd);
+        lastEnd = end;
+        // 设置默认格式
+        format.setForeground(Qt::black);
+        format.setFontWeight(QFont::Normal);
+
+        // 解析参数并设置格式
+        QStringList params
+            = match.captured(0).mid(2, match.capturedLength() - 3).split(';');
+
+        for (const QString &param : params)
+        {
+            colorValue = param.toInt();
+
+//            qDebug() << "prase"<<param.toStdString().c_str()<<"v"<<value;
+            switch (colorValue)
+            {
+                case 0:
+                    format.setForeground(Qt::black);
+                    format.setFontWeight(QFont::Normal);
+                    break;
+                case 1:
+                    format.setFontWeight(QFont::Bold);
+                    break;
+                case 31:
+                    format.setForeground(Qt::red);
+                    break;
+                case 32:
+                    format.setForeground(Qt::green);
+                    break;
+                case 33:
+                    format.setForeground(Qt::yellow);
+                    break;
+                case 34:
+                    format.setForeground(Qt::blue);
+                    break;
+                case 35:
+                    format.setForeground(Qt::magenta);
+                    break;
+                case 36:
+                    format.setForeground(Qt::cyan);
+                    break;
+                case 37:
+                    format.setForeground(Qt::white);
+                    break;
+                default:
+                    // 其他参数忽略
+                    break;
+            }
+            // Add text at the end of the text document
+//            QTextCursor cursor(m_textEdit.document());
+//            cursor.movePosition(QTextCursor::End);
+//            cursor.insertText(plainText, format);
+//            cursor.beginEditBlock();
+//            cursor.movePosition(QTextCursor::End);
+//            cursor.insertText(textToInsert, format);
+//            cursor.endEditBlock();
+        }
+        if (colorValue > 0)
+            break ;// prase one color
+    }
+    return format;
+}
 /**
  * Inserts the given @a text directly, no additional line breaks added.
  */
@@ -564,19 +644,19 @@ void Widgets::Terminal::addText(const QString &text, const bool enableVt100)
 {
     // Get text to insert
     QString textToInsert = text;
-    if (enableVt100)
-        textToInsert = vt100Processing(text);
+    auto format = praseColor(textToInsert);
+    //    if (enableVt100)
+    textToInsert = vt100Processing(text);
+
+    QTextCursor cursor(m_textEdit.document());
+    cursor.beginEditBlock();
+    cursor.movePosition(QTextCursor::End);
+    cursor.insertText(textToInsert, format);
+    cursor.endEditBlock();
 
     // Clear terminal scrollback after 10000 lines
     if (m_textEdit.blockCount() >= 10000)
         m_textEdit.clear();
-
-    // Add text at the end of the text document
-    QTextCursor cursor(m_textEdit.document());
-    cursor.beginEditBlock();
-    cursor.movePosition(QTextCursor::End);
-    cursor.insertText(textToInsert);
-    cursor.endEditBlock();
 
     // Autoscroll to bottom (if needed)
     updateScrollbarVisibility();
@@ -609,6 +689,7 @@ QString Widgets::Terminal::vt100Processing(const QString &data)
         [](const FormattedText &t1, const FormattedText &t2) -> QString {
             return t1.text + t2.text;
         });
+
     m_escapeCodeHandler.endFormatScope();
 
     return cleanLine;

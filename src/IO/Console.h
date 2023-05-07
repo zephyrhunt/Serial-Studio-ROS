@@ -45,6 +45,10 @@ class Console : public QObject
                READ echo
                WRITE setEcho
                NOTIFY echoChanged)
+    Q_PROPERTY(bool echoRx
+                   READ echoRx
+                   WRITE setEchoRx
+                   NOTIFY echoRxChanged)
     Q_PROPERTY(bool autoscroll
                READ autoscroll
                WRITE setAutoscroll
@@ -85,6 +89,7 @@ class Console : public QObject
 
 Q_SIGNALS:
     void echoChanged();
+    void echoRxChanged();
     void dataReceived();
     void dataModeChanged();
     void autoscrollChanged();
@@ -131,6 +136,7 @@ public:
     static Console &instance();
 
     bool echo() const;
+    bool echoRx()const;
     bool autoscroll() const;
     bool autoWrap() const;
     bool saveAvailable() const;
@@ -156,6 +162,7 @@ public Q_SLOTS:
     void historyDown();
     void send(const QString &data);
     void setEcho(const bool enabled);
+    void setEchoRx(const bool enabled);
     void print(const QString &fontFamily);
     void setAutoscroll(const bool enabled);
     void setAutoWrap(const bool enabled);
@@ -185,6 +192,7 @@ private:
     qint32 m_inTime;
 
     bool m_echo;
+    bool m_echoRx;
     bool m_autoscroll;
     bool m_autoWrap;
     bool m_showTimestamp;

@@ -116,6 +116,14 @@ bool IO::Console::echo() const
 }
 
 /**
+ * Returns @c true if the console shall display the commands that the user has sent
+ * from the serial/network device.
+ */
+bool IO::Console::echoRx() const
+{
+    return m_echoRx;
+}
+/**
  * Returns @c true if the vertical position of the console display shall be automatically
  * moved to show latest data.
  */
@@ -391,6 +399,15 @@ void IO::Console::setEcho(const bool enabled)
 }
 
 /**
+ * Enables or disables displaying receive data in the console screen. See @c echoRx() for more
+ * information.
+ */
+void IO::Console::setEchoRx(const bool enabled)
+{
+    m_echoRx = enabled;
+    Q_EMIT echoRxChanged();
+}
+/**
  * Creates a text document with current console output & prints it using native
  * system libraries/toolkits.
  *
@@ -551,7 +568,7 @@ void IO::Console::append(const QString &string, const bool addTimestamp)
 void IO::Console::onDataSent(const QByteArray &data)
 {
     if (echo())
-        append(dataToString(data) + "\n", showTimestamp());
+        append(dataToString(data), showTimestamp());
 }
 
 /**
@@ -559,7 +576,8 @@ void IO::Console::onDataSent(const QByteArray &data)
  */
 void IO::Console::onDataReceived(const QByteArray &data)
 {
-    append(dataToString(data), showTimestamp());
+    if (echoRx())
+        append(dataToString(data), showTimestamp());
 }
 
 /**
